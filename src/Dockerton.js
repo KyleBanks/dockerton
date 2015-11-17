@@ -82,6 +82,26 @@ function Dockerton() {
             return self;
         };
     });
+
+    /**
+     * Adds a RUN command to the Dockerfile.
+     *
+     * See http://docs.docker.com/engine/reference/builder/#run
+     *
+     * If the `commands` argument provided is a String, it will be used in `RUN <command>` format, otherwise
+     * if it's an Array, it will be using in `RUN ["command1", "command2", ...]` format.
+     *
+     * @param commands {Array || String}
+     */
+    this.run = function(commands) {
+        if (commands instanceof Array) {
+            self._commands.push(util.format('RUN ["%s"]', commands.join("\", \"")));
+        } else {
+            self._commands.push(util.format('RUN %s', commands));
+        }
+
+        return self;
+    };
 }
 
 /**

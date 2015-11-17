@@ -45,6 +45,29 @@ new Dockerton()
     .maintainer('Kyle Banks') // -> MAINTAINER Kyle Banks
 ```
 
+### RUN
+
+See [RUN documentation](http://docs.docker.com/engine/reference/builder/#run) for more details.
+
+*The RUN instruction will execute any commands in a new layer on top of the current image and commit the results. The resulting committed image will be used for the next step in the Dockerfile.*
+
+#### Usage
+```node
+dockerton.run(commands);
+```
+
+- **commands**: Either a `String` or `Array` of commands to be RUN.
+    - If the `commands` argument provided is a String, it will be used in `RUN <command>` format, otherwise
+    if it's an Array, it will be using in `RUN ["command1", "command2", ...]` format.
+    
+#### Examples
+```node
+new Dockerton()
+    .run('echo hey') // -> RUN echo hey
+    .run(['cd examples', 'node whalesay.js']) // -> RUN ["cd examples", "node whalesay.js"] 
+```
+
+
 ## License
 ```
 The MIT License (MIT)

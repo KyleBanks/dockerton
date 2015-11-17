@@ -17,9 +17,24 @@ var expect = chai.expect;
 /**
  * @private
  */
-describe('Dockerton', function() {
 
-    var Dockerton = null;
+/**
+ * Will be populated by the first test case.
+ *
+ * @type {Dockerton}
+ */
+var Dockerton = null;
+
+/**
+ * Convenience function to return a new Dockerton instance.
+ *
+ * @returns {Dockerton}
+ */
+function _new() {
+    return new Dockerton();
+}
+
+describe('Dockerton', function() {
 
     /**
      * require
@@ -36,11 +51,11 @@ describe('Dockerton', function() {
      * constructor
      */
     it('constructor: initializes properly', function(done) {
-        var dockerton = new Dockerton();
+        var d = new Dockerton();
 
-        expect(dockerton).to.be.a('object');
-        dockerton._commands.should.be.a('array');
-        dockerton._commands.length.should.equal(0);
+        expect(d).to.be.a('object');
+        d._commands.should.be.a('array');
+        d._commands.length.should.equal(0);
 
         done();
     });
@@ -49,53 +64,53 @@ describe('Dockerton', function() {
      * from
      */
     it('from: works without a tag', function(done) {
-        var dockerton = new Dockerton();
-        dockerton.from('sample');
+        var d = _new();
+        d.from('sample');
 
-        dockerton._commands.length.should.equal(1);
-        dockerton._commands[0].should.equal('FROM sample');
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('FROM sample');
 
         done();
     });
 
     it ('from: works with a null tag', function(done) {
-        var dockerton = new Dockerton();
-        dockerton.from('sample', null);
+        var d = _new();
+        d.from('sample', null);
 
-        dockerton._commands.length.should.equal(1);
-        dockerton._commands[0].should.equal('FROM sample');
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('FROM sample');
 
         done();
     });
 
     it('from: works with an empty tag', function(done) {
-        var dockerton = new Dockerton();
-        dockerton.from('sample', '');
+        var d = _new();
+        d.from('sample', '');
 
-        dockerton._commands.length.should.equal(1);
-        dockerton._commands[0].should.equal('FROM sample');
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('FROM sample');
 
         done();
     });
 
     it('from: works with a valid tag', function(done) {
-        var dockerton = new Dockerton();
-        dockerton.from('sample', '1.2.3');
+        var d = _new();
+        d.from('sample', '1.2.3');
 
-        dockerton._commands.length.should.equal(1);
-        dockerton._commands[0].should.equal('FROM sample:1.2.3');
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('FROM sample:1.2.3');
 
         done();
     });
 
     it('from: can be chained', function(done) {
-        var dockerton = new Dockerton()
+        var d = _new()
             .from('sample1', '1.2.3')
             .from('sample2', '3.2.1');
 
-        dockerton._commands.length.should.equal(2);
-        dockerton._commands[0].should.equal('FROM sample1:1.2.3');
-        dockerton._commands[1].should.equal('FROM sample2:3.2.1');
+        d._commands.length.should.equal(2);
+        d._commands[0].should.equal('FROM sample1:1.2.3');
+        d._commands[1].should.equal('FROM sample2:3.2.1');
 
         done();
     });
@@ -104,23 +119,78 @@ describe('Dockerton', function() {
      * maintainer
      */
     it('maintainer: adds a valid maintainer', function(done) {
-        var dockerton = new Dockerton();
-        dockerton.maintainer('Kyle');
+        var d = _new();
+        d.maintainer('Kyle');
 
-        dockerton._commands.length.should.equal(1);
-        dockerton._commands[0].should.equal('MAINTAINER Kyle');
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('MAINTAINER Kyle');
 
         done();
     });
 
     it('maintainer: can be chained', function(done) {
-        var dockerton = new Dockerton()
+        var d = _new()
             .maintainer('author1')
             .maintainer('author2');
 
-        dockerton._commands.length.should.equal(2);
-        dockerton._commands[0].should.equal('MAINTAINER author1');
-        dockerton._commands[1].should.equal('MAINTAINER author2');
+        d._commands.length.should.equal(2);
+        d._commands[0].should.equal('MAINTAINER author1');
+        d._commands[1].should.equal('MAINTAINER author2');
+
+        done();
+    });
+
+    /**
+     * run
+     */
+    it('run: adds a simple command', function(done) {
+        var d = _new();
+        d.run('cd test');
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('RUN cd test');
+
+        done();
+    });
+
+    it('run: adds a single command in an array', function(done) {
+        var d = _new();
+        d.run(['cd test']);
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('RUN ["cd test"]');
+
+        done();
+    });
+
+    it('run: adds multiple commands in an array', function(done) {
+        var d = _new();
+        d.run(['cd test', 'echo hey']);
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('RUN ["cd test", "echo hey"]');
+
+        done();
+    });
+
+    it('run: escapes quotes in a command', function(done) {
+        var d = _new();
+        d.run(['cd test', 'echo "hey"']);
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('RUN ["cd test", "echo \"hey\""]');
+
+        done();
+    });
+
+    it('run: can be chained', function(done) {
+        var d = _new()
+            .run('cd test')
+            .run(['echo "hey"', 'echo "howdy"']);
+
+        d._commands.length.should.equal(2);
+        d._commands[0].should.equal('RUN cd test');
+        d._commands[1].should.equal('RUN ["echo \"hey\"", "echo \"howdy\""]');
 
         done();
     });
