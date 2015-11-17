@@ -17,13 +17,85 @@ var expect = chai.expect;
 /**
  * @private
  */
-describe('dockerton', function() {
+describe('Dockerton', function() {
 
-    var dockerton = null;
+    var Dockerton = null;
 
-    it('imports correctly', function(done) {
-        dockerton = require('../index');
-        expect(dockerton).to.be.a('function');
+    /**
+     * require
+     */
+    it('require: loads correctly', function(done) {
+        Dockerton = require('../index');
+
+        expect(Dockerton).to.be.a('function');
+
+        done();
+    });
+
+    /**
+     * constructor
+     */
+    it('constructor: initializes properly', function(done) {
+        var dockerton = new Dockerton();
+
+        expect(dockerton).to.be.a('object');
+        dockerton._commands.should.be.a('array');
+        dockerton._commands.length.should.equal(0);
+
+        done();
+    });
+
+    /**
+     * from
+     */
+    it('from: works without a tag', function(done) {
+        var dockerton = new Dockerton();
+        dockerton.from('sample');
+
+        dockerton._commands.length.should.equal(1);
+        dockerton._commands[0].should.equal('FROM sample');
+
+        done();
+    });
+
+    it ('from: works with a null tag', function(done) {
+        var dockerton = new Dockerton();
+        dockerton.from('sample', null);
+
+        dockerton._commands.length.should.equal(1);
+        dockerton._commands[0].should.equal('FROM sample');
+
+        done();
+    });
+
+    it('from: works with an empty tag', function(done) {
+        var dockerton = new Dockerton();
+        dockerton.from('sample', '');
+
+        dockerton._commands.length.should.equal(1);
+        dockerton._commands[0].should.equal('FROM sample');
+
+        done();
+    });
+
+    it('from: works with a valid tag', function(done) {
+        var dockerton = new Dockerton();
+        dockerton.from('sample', '1.2.3');
+
+        dockerton._commands.length.should.equal(1);
+        dockerton._commands[0].should.equal('FROM sample:1.2.3');
+
+        done();
+    });
+
+    it('from: can be chained', function(done) {
+        var dockerton = new Dockerton()
+            .from('sample1', '1.2.3')
+            .from('sample2', '3.2.1');
+
+        dockerton._commands.length.should.equal(2);
+        dockerton._commands[0].should.equal('FROM sample1:1.2.3');
+        dockerton._commands[1].should.equal('FROM sample2:3.2.1');
 
         done();
     });

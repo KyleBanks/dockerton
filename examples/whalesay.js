@@ -10,5 +10,10 @@
 /**
  * @imports
  */
-var dockerton = require('../index');
+var Dockerton = require('../index');
 
+/**
+ * @private
+ */
+var dockerton = new Dockerton()
+    .from('docker/whalesay', 'latest');
