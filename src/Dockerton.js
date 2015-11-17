@@ -18,6 +18,15 @@
  */
 function Dockerton() {
 
+    /**
+     * Contains each command, in sequence, to be used in the generated
+     * Dockerfile.
+     *
+     * @type {Array}
+     */
+    this._commands = [];
+
+
 }
 
 /**
