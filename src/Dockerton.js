@@ -64,6 +64,26 @@ function _escapeStringArray(input) {
 }
 
 /**
+ * Constructs a command that requires either a String or an Array.
+ *
+ * @param cmd {String} The name of the command, for example "RUN"
+ * @param array {String || Array} The string/array to be used in conjunction with the command.
+ * @returns {String}
+ */
+function _constructStringOrArrayCommand(cmd, array) {
+    if (array instanceof Array) {
+        array = _escapeStringArray(array);
+
+        return util.format('%s ["%s"]', cmd, array.join('", "'));
+    } else {
+        var string = array;
+        string = _escapeString(string);
+
+        return util.format('%s %s', cmd, string);
+    }
+}
+
+/**
  * Dockerton Constructor
  *
  * @constructor
@@ -124,16 +144,9 @@ function Dockerton() {
      * @return {Dockerton}
      */
     self.run = function(commands) {
-        if (commands instanceof Array) {
-            commands = _escapeStringArray(commands);
-
-            self._commands.push(util.format('RUN ["%s"]', commands.join('", "')));
-        } else {
-            var command = commands;
-            command = _escapeString(command);
-
-            self._commands.push(util.format('RUN %s', command));
-        }
+        self._commands.push(
+            _constructStringOrArrayCommand("RUN", commands)
+        );
 
         return self;
     };
@@ -151,16 +164,9 @@ function Dockerton() {
      * @return {Dockerton}
      */
     self.cmd = function(commands) {
-        if (commands instanceof Array) {
-            commands = _escapeStringArray(commands);
-
-            self._commands.push(util.format('CMD ["%s"]', commands.join('", "')));
-        } else {
-            var command = commands;
-            command = _escapeString(command);
-
-            self._commands.push(util.format('CMD %s', command));
-        }
+        self._commands.push(
+            _constructStringOrArrayCommand("CMD", commands)
+        );
 
         return self;
     };
@@ -276,9 +282,9 @@ function Dockerton() {
      */
     self.add = function(sources, destination) {
         if (sources instanceof Array) {
-            sources = _escapeStringArray(sources);
-
-            self._commands.push(util.format('ADD ["%s", "%s"]', sources.join('", "'), destination));
+            self._commands.push(
+                _constructStringOrArrayCommand("ADD", sources.concat(destination))
+            );
         } else {
             self._commands.push(util.format("ADD %s %s", _escapeString(sources), _escapeString(destination)));
         }
@@ -301,12 +307,32 @@ function Dockerton() {
      */
     self.copy = function(sources, destination) {
         if (sources instanceof Array) {
-            sources = _escapeStringArray(sources);
-
-            self._commands.push(util.format('COPY ["%s", "%s"]', sources.join('", "'), destination));
+            self._commands.push(
+                _constructStringOrArrayCommand("COPY", sources.concat(destination))
+            );
         } else {
             self._commands.push(util.format("COPY %s %s", _escapeString(sources), _escapeString(destination)));
         }
+
+        return self;
+    };
+
+    /**
+     * Adds a ENTRYPOINT to the Dockerfile.
+     *
+     * See http://docs.docker.com/engine/reference/builder/#entrypoint
+     *
+     * If the `commands` argument provided is a String, it will be used in `ENTRYPOINT <command>` format.
+     * If the `commands` argument provided is an Array, it will be using in `ENTRYPOINT ["command1", "command2", ...]` format.
+     *
+     * @param commands {Array || String}
+     *
+     * @return {Dockerton}
+     */
+    self.entrypoint = function(commands) {
+        self._commands.push(
+            _constructStringOrArrayCommand("ENTRYPOINT", commands)
+        );
 
         return self;
     };

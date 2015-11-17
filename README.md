@@ -209,6 +209,29 @@ new Dockerton()
    .copy(['index.html', 'app.js'], 'dest/') // -> COPY ["index.html", "app.js", "dest/"] 
 ```
 
+### ENTRYPOINT
+
+See [ENTRYPOINT documentation](http://docs.docker.com/engine/reference/builder/#entrypoint) for more details.
+
+*An ENTRYPOINT allows you to configure a container that will run as an executable.*
+
+##### Usage
+```node
+dockerton.entrypoint(commands);
+```
+
+- **commands**: Either a `String` or `Array` of commands to be used as the ENTRYPOINT.
+   - If the `commands` argument provided is a String, it will be used in `ENTRYPOINT <command>` format.
+   - If the `commands` argument provided is an Array, it will be using in `ENTRYPOINT ["command1", "command2", ...]` format.
+   
+##### Examples
+```node
+new Dockerton()
+   .entrypoint('top -b') // -> ENTRYPOINT top -b
+   .entrypoint(['top', '-b']) // -> ENTRYPOINT ["top", "-b"] 
+```
+
+
 ## License
 ```
 The MIT License (MIT)

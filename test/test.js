@@ -516,4 +516,59 @@ describe('Dockerton', function() {
 
         done();
     });
+
+    /**
+     * run
+     */
+    it('ENTRYPOINT: adds a simple entrypoint', function(done) {
+        var d = _new();
+        d.entrypoint('top -b');
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('ENTRYPOINT top -b');
+
+        done();
+    });
+
+    it('ENTRYPOINT: adds a single entrypoint in an array', function(done) {
+        var d = _new();
+        d.entrypoint(['top']);
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('ENTRYPOINT ["top"]');
+
+        done();
+    });
+
+    it('ENTRYPOINT: adds multiple entrypoints in an array', function(done) {
+        var d = _new();
+        d.entrypoint(['top', '-b']);
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('ENTRYPOINT ["top", "-b"]');
+
+        done();
+    });
+
+    it('ENTRYPOINT: escapes quotes in an entrypoint', function(done) {
+        var d = _new();
+        d.entrypoint(['top', 'withQuote"']);
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('ENTRYPOINT ["top", "withQuote\\""]');
+
+        done();
+    });
+
+    it('ENTRYPOINT: can be chained', function(done) {
+        var d = _new()
+            .entrypoint('top -b')
+            .entrypoint(['top', '-b']);
+
+        d._commands.length.should.equal(2);
+        d._commands[0].should.equal('ENTRYPOINT top -b');
+        d._commands[1].should.equal('ENTRYPOINT ["top", "-b"]');
+
+        done();
+    });
 });
