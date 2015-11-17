@@ -285,6 +285,31 @@ function Dockerton() {
 
         return self;
     };
+
+    /**
+     * Adds a COPY to the Dockerfile.
+     *
+     * See http://docs.docker.com/engine/reference/builder/#copy
+     *
+     * If the `sources` argument provided is a String, it will be used in `COPY src dest` format.
+     * If the `sources` argument provided is an Array, it will be used in `COPY ["src1", "src2", ... "dest"]` format.
+     *
+     * @param sources {String || Array}
+     * @param destination {String}
+     *
+     * @returns {Dockerton}
+     */
+    self.copy = function(sources, destination) {
+        if (sources instanceof Array) {
+            sources = _escapeStringArray(sources);
+
+            self._commands.push(util.format('COPY ["%s", "%s"]', sources.join('", "'), destination));
+        } else {
+            self._commands.push(util.format("COPY %s %s", _escapeString(sources), _escapeString(destination)));
+        }
+
+        return self;
+    };
 }
 
 /**

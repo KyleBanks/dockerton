@@ -471,4 +471,49 @@ describe('Dockerton', function() {
 
         done();
     });
+
+    /**
+     * copy
+     */
+    it('COPY: copies a single file', function(done) {
+        var d = _new()
+            .copy('src', 'dest');
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal("COPY src dest");
+
+        done();
+    });
+
+    it('COPY: adds a single file in an array', function(done) {
+        var d = _new()
+            .copy(['src'], 'dest');
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('COPY ["src", "dest"]');
+
+        done();
+    });
+
+    it('COPY: adds multiple files in an array', function(done) {
+        var d = _new()
+            .copy(['src1', 'src2'], 'dest');
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('COPY ["src1", "src2", "dest"]');
+
+        done();
+    });
+
+    it('COPY: can be chained', function(done) {
+        var d = _new()
+            .copy(['src1', 'src2'], 'dest1')
+            .copy(['src3', 'src4'], 'dest2');
+
+        d._commands.length.should.equal(2);
+        d._commands[0].should.equal('COPY ["src1", "src2", "dest1"]');
+        d._commands[1].should.equal('COPY ["src3", "src4", "dest2"]');
+
+        done();
+    });
 });

@@ -186,6 +186,29 @@ new Dockerton()
    .add(['index.html', 'app.js'], 'dest/') // -> ADD ["index.html", "app.js", "dest/"] 
 ```
 
+### COPY
+
+See [COPY](http://docs.docker.com/engine/reference/builder/#copy) for more details.
+
+*The COPY instruction copies new files or directories from <src> and adds them to the filesystem of the container at the path <dest>.*
+
+##### Usage
+```node
+dockerton.copy(sources, destination);
+```
+
+- **sources**: Either a `String` or `Array` of source files/directories to be copied.
+   - If the `sources` argument provided is a String, it will be used in `COPY src dest` format.
+   - If the `sources` argument provided is an Array, it will be used in `COPY ["src1", "src2", ... "dest"]` format.
+- **destination**: The destination to which the sources will be copied.
+   
+##### Examples
+```node
+new Dockerton()
+   .copy('source/', 'dest/') // -> COPY source/ dest/
+   .copy(['index.html', 'app.js'], 'dest/') // -> COPY ["index.html", "app.js", "dest/"] 
+```
+
 ## License
 ```
 The MIT License (MIT)
