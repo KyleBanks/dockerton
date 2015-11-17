@@ -100,4 +100,29 @@ describe('Dockerton', function() {
         done();
     });
 
+    /**
+     * maintainer
+     */
+    it('maintainer: adds a valid maintainer', function(done) {
+        var dockerton = new Dockerton();
+        dockerton.maintainer('Kyle');
+
+        dockerton._commands.length.should.equal(1);
+        dockerton._commands[0].should.equal('MAINTAINER Kyle');
+
+        done();
+    });
+
+    it('maintainer: can be chained', function(done) {
+        var dockerton = new Dockerton()
+            .maintainer('author1')
+            .maintainer('author2');
+
+        dockerton._commands.length.should.equal(2);
+        dockerton._commands[0].should.equal('MAINTAINER author1');
+        dockerton._commands[1].should.equal('MAINTAINER author2');
+
+        done();
+    });
+
 });

@@ -8,6 +8,11 @@
 'use strict';
 
 /**
+ * @imports
+ */
+var util = require('util');
+
+/**
  * @private
  */
 
@@ -21,11 +26,22 @@
 var FROM_IMAGE_TAG_SEPARATOR = ":";
 
 /**
+ * "Simple commands" are the ones that only take a single string argument and have no other
+ * special usage considerations.
+ *
+ * @type {Array}
+ */
+var SIMPLE_COMMANDS = [
+    "MAINTAINER"
+];
+
+/**
  * Dockerton Constructor
  *
  * @constructor
  */
 function Dockerton() {
+    var self = this;
 
     /**
      * Contains each command, in sequence, to be used in the generated
@@ -33,7 +49,7 @@ function Dockerton() {
      *
      * @type {Array}
      */
-    this._commands = [];
+    self._commands = [];
 
     /**
      * Sets the base image for subsequent instructions.
@@ -51,10 +67,21 @@ function Dockerton() {
             command = command + FROM_IMAGE_TAG_SEPARATOR + tag;
         }
 
-        this._commands.push("FROM " + command);
+        self._commands.push(util.format("FROM %s", command));
 
-        return this;
-    }
+        return self;
+    };
+
+    /**
+     * Add each of the simple commands dynamically.
+     */
+    SIMPLE_COMMANDS.forEach(function(cmd) {
+        self[cmd.toLowerCase()] = function(arg) {
+            self._commands.push(util.format("%s %s", cmd, arg));
+
+            return self;
+        };
+    });
 }
 
 /**

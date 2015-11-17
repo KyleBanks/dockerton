@@ -4,7 +4,7 @@
 
 ### FROM
 
-See [FROM documention](http://docs.docker.com/engine/reference/builder/#from) for more details.
+See [FROM documentation](http://docs.docker.com/engine/reference/builder/#from) for more details.
 
 *The FROM instruction sets the Base Image for subsequent instructions. As such, a valid Dockerfile must have FROM as its first instruction.*
 
@@ -23,6 +23,26 @@ new Dockerton()
     .from('whalesay') // -> FROM whalesay
     .from('whalesay', 'latest') // -> FROM whalesay:latest
     .from('whalesay', '1.4.8') // -> FROM whalesay:1.4.8
+```
+
+### MAINTAINER
+
+See [MAINTAINER documentation](http://docs.docker.com/engine/reference/builder/#maintainer) for more details.
+
+*The MAINTAINER instruction allows you to set the Author field of the generated images.*
+
+#### Usage
+
+```node
+dockerton.maintainer(author);
+```
+
+- **author**: The name of the author to display
+ 
+#### Examples
+```node
+new Dockerton()
+    .maintainer('Kyle Banks') // -> MAINTAINER Kyle Banks
 ```
 
 ## License
