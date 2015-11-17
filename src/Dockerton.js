@@ -365,6 +365,23 @@ function Dockerton() {
 
         return self;
     };
+
+    /**
+     * Adds a USER to the Dockerfile.
+     *
+     * See http://docs.docker.com/engine/reference/builder/#user
+     *
+     * @param user {String} The name of the user to use with the USER command.
+     *
+     * @return {Dockerton}
+     */
+    self.user = function(user) {
+        self._commands.push(
+            _constructSimpleCommand("USER", user)
+        );
+
+        return self;
+    };
 }
 
 /**

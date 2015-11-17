@@ -616,4 +616,29 @@ describe('Dockerton', function() {
 
         done();
     });
+
+    /**
+     * user
+     */
+    it('USER: adds a valid user', function(done) {
+        var d = _new();
+        d.user('kyle');
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('USER kyle');
+
+        done();
+    });
+
+    it('USER: can be chained', function(done) {
+        var d = _new()
+            .user('user1')
+            .user('user2');
+
+        d._commands.length.should.equal(2);
+        d._commands[0].should.equal('USER user1');
+        d._commands[1].should.equal('USER user2');
+
+        done();
+    });
 });

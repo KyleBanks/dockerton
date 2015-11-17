@@ -253,7 +253,25 @@ new Dockerton()
    .volume(['/vol2', '/vol3']) // -> VOLUME ["/vol2", "/vol3"] 
 ```
 
+### USER
 
+See [USER documentation](http://docs.docker.com/engine/reference/builder/#user) for more details.
+
+*The USER instruction sets the user name or UID to use when running the image and for any RUN, CMD and ENTRYPOINT instructions that follow it in the Dockerfile.*
+
+##### Usage
+
+```node
+dockerton.user(user);
+```
+
+- **user**: The name or UID of the user to use.
+ 
+##### Examples
+```node
+new Dockerton()
+    .user('kyle') // -> USER kyle
+```
 
 ## License
 ```
