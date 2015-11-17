@@ -518,7 +518,7 @@ describe('Dockerton', function() {
     });
 
     /**
-     * run
+     * entrypoint
      */
     it('ENTRYPOINT: adds a simple entrypoint', function(done) {
         var d = _new();
@@ -568,6 +568,51 @@ describe('Dockerton', function() {
         d._commands.length.should.equal(2);
         d._commands[0].should.equal('ENTRYPOINT top -b');
         d._commands[1].should.equal('ENTRYPOINT ["top", "-b"]');
+
+        done();
+    });
+
+    /**
+     * volume
+     */
+    it('VOLUME: adds a simple volume', function(done) {
+        var d = _new();
+        d.volume('/vol1');
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('VOLUME /vol1');
+
+        done();
+    });
+
+    it('VOLUME: adds a single volume in an array', function(done) {
+        var d = _new();
+        d.volume(['/vol1']);
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('VOLUME ["/vol1"]');
+
+        done();
+    });
+
+    it('VOLUME: adds multiple volumes in an array', function(done) {
+        var d = _new();
+        d.volume(['/vol1', '/vol2']);
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('VOLUME ["/vol1", "/vol2"]');
+
+        done();
+    });
+
+    it('VOLUME: can be chained', function(done) {
+        var d = _new()
+            .volume('/vol1')
+            .volume(['/vol2', '/vol3']);
+
+        d._commands.length.should.equal(2);
+        d._commands[0].should.equal('VOLUME /vol1');
+        d._commands[1].should.equal('VOLUME ["/vol2", "/vol3"]');
 
         done();
     });

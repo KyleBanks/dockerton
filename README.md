@@ -231,6 +231,29 @@ new Dockerton()
    .entrypoint(['top', '-b']) // -> ENTRYPOINT ["top", "-b"] 
 ```
 
+### VOLUME
+
+See [VOLUME documentation](http://docs.docker.com/engine/reference/builder/#volume) for more details.
+
+*The VOLUME instruction creates a mount point with the specified name and marks it as holding externally mounted volumes from native host or other containers.*
+
+##### Usage
+```node
+dockerton.volume(volumes);
+```
+
+- **volumes**: Either a `String` or `Array` of commands to be used as the VOLUME.
+   - If the `volumes` argument provided is a String, it will be used in `VOLUME <volume>` format.
+   - If the `volumes` argument provided is an Array, it will be using in `VOLUME ["/vol1", "/vol2", ...]` format.
+   
+##### Examples
+```node
+new Dockerton()
+   .volume('/vol1') // -> VOLUME /vol1
+   .volume(['/vol2', '/vol3']) // -> VOLUME ["/vol2", "/vol3"] 
+```
+
+
 
 ## License
 ```

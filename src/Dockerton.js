@@ -336,6 +336,26 @@ function Dockerton() {
 
         return self;
     };
+
+    /**
+     * Adds a VOLUME to the Dockerfile.
+     *
+     * See http://docs.docker.com/engine/reference/builder/#volume
+     *
+     * If the `commands` argument provided is a String, it will be used in `VOLUME <vol>` format.
+     * If the `commands` argument provided is an Array, it will be using in `VOLUME ["vol1", "vol2", ...]` format.
+     *
+     * @param volumes {Array || String}
+     *
+     * @return {Dockerton}
+     */
+    self.volume = function(volumes) {
+        self._commands.push(
+            _constructStringOrArrayCommand("VOLUME", volumes)
+        );
+
+        return self;
+    };
 }
 
 /**
