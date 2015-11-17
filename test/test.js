@@ -360,4 +360,70 @@ describe('Dockerton', function() {
 
         done();
     });
+
+    /**
+     * env
+     */
+    it('ENV: adds a simple ENV variable', function(done) {
+        var d = _new()
+            .env('key', 'value');
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal("ENV key value");
+
+        done();
+    });
+
+    it('ENV: adds a single ENV variable in a map', function(done) {
+        var d = _new()
+            .env({
+                key: "value"
+            });
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('ENV key="value"');
+
+        done();
+    });
+
+    it('ENV: adds multiple ENV variables', function(done) {
+        var d = _new()
+            .env({
+                key: 'value',
+                key2: 'value2'
+            });
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('ENV key="value" \\\n\tkey2="value2"');
+
+        done();
+    });
+
+    it('ENV: escapes quotes in an ENV variable', function(done) {
+        var d = _new()
+            .env({
+                key: 'valueWith"' // Note: keys with quotes in them are not supported
+            });
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('ENV key="valueWith\\""');
+
+        done();
+    });
+
+    it('ENV: can be chained', function(done) {
+        var d = _new()
+            .env({
+                l1: "v1"
+            })
+            .env({
+                l2: "v2"
+            });
+
+        d._commands.length.should.equal(2);
+        d._commands[0].should.equal('ENV l1="v1"');
+        d._commands[1].should.equal('ENV l2="v2"');
+
+        done();
+    });
 });

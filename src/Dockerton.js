@@ -180,7 +180,7 @@ function Dockerton() {
      *  })
      *
      * @param key {String || Object}
-     * @param value {String}
+     * @param [value] {String} Required only if `key` is a String
      *
      * @return {Dockerton}
      */
@@ -195,7 +195,6 @@ function Dockerton() {
             Object.keys(map).forEach(function(key) {
                 keyValuePairs.push(util.format('"%s"="%s"', _escapeString(key), _escapeString(map[key])));
             });
-
 
             self._commands.push(util.format('LABEL %s', keyValuePairs.join(' \\\n\t')));
         }
@@ -220,6 +219,43 @@ function Dockerton() {
             self._commands.push(util.format('EXPOSE %s', ports.join(" ")));
         } else {
             self._commands.push(util.format('EXPOSE %s', ports));
+        }
+
+        return self;
+    };
+
+    /**
+     * Adds an ENV to the Dockerfile.
+     *
+     * See http://docs.docker.com/engine/reference/builder/#env
+     *
+     * If a key and value is passed, constructs a simple key-value pair ENV, otherwise if an object is passed,
+     * constructs an ENV command using the object key-value pairs as the ENV key-value pairs.
+     *
+     * For example, can be used in either form:
+     *  .env(key, value)
+     *  .env({
+     *      key: value
+     *  })
+     *
+     * @param key {String || Object}
+     * @param [value] {String} Required only if `key` is a String
+     *
+     * @return {Dockerton}
+     */
+    self.env = function(key, value) {
+        if (typeof key === 'string') {
+            self._commands.push(util.format('ENV %s %s', key, value));
+        } else {
+            var map = key,
+                keyValuePairs = [];
+
+            // Iterate the keys in the map, and add each as a key value pair
+            Object.keys(map).forEach(function(key) {
+                keyValuePairs.push(util.format('%s="%s"', key, _escapeString(map[key])));
+            });
+
+            self._commands.push(util.format('ENV %s', keyValuePairs.join(' \\\n\t')));
         }
 
         return self;

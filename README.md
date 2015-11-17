@@ -104,7 +104,7 @@ dockerton.label(key, value)
 `label` supports two usages, either by providing a key and value or a map containing key-value pairs.
 
 - **key**: A single key String.
-- **value**: A single value String.
+- **value**: *(Optional)*: A single value String, required only if the first argument is a String.
 - **map**: An object containing any number of key-value pairs. All keys and values are treated as strings and added to the LABEL.
 
 ##### Examples
@@ -135,6 +135,32 @@ dockerton.expose(ports);
 new Dockerton()
     .expose(80) // -> EXPOSE 80
     .expose([80, 8080]) // -> EXPOSE 80 8080
+```
+
+### ENV
+
+See [ENV documentation](http://docs.docker.com/engine/reference/builder/#env) for more details.
+
+*The ENV instruction sets the environment variable <key> to the value <value>. This value will be in the environment of all "descendant" Dockerfile commands and can be replaced inline in many as well.*
+
+##### Usage
+```node
+dockerton.env(key, value)
+         .env(map);
+```
+
+`env` supports two usages, either by providing a key and value or a map containing key-value pairs.
+
+- **key**: A single key String.
+- **value** *(Optional)*: A single value String, required only if the first argument is a String.
+- **map**: An object containing any number of key-value pairs. All keys and values are treated as strings and added to the ENV.
+
+##### Examples
+```node
+new Dockerton()
+    .env("env", "prod") // -> ENV env prod
+    .env({ env: "prod", country: "CA" }) // -> ENV env="prod" \
+                                                   country="CA"
 ```
 
 ## License
