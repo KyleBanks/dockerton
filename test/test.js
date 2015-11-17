@@ -666,4 +666,39 @@ describe('Dockerton', function() {
 
         done();
     });
+
+    /**
+     * arg
+     */
+    it('ARG: adds a simple ARG variable', function(done) {
+        var d = _new()
+            .arg('myArg');
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal("ARG myArg");
+
+        done();
+    });
+
+    it('ARG: adds an ARG variable with a default value', function(done) {
+        var d = _new()
+            .arg('myArg', 'myVal');
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('ARG myArg=myVal');
+
+        done();
+    });
+
+    it('ARG: can be chained', function(done) {
+        var d = _new()
+            .arg('arg1')
+            .arg('arg2', 'val2');
+
+        d._commands.length.should.equal(2);
+        d._commands[0].should.equal('ARG arg1');
+        d._commands[1].should.equal('ARG arg2=val2');
+
+        done();
+    });
 });

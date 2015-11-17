@@ -399,6 +399,29 @@ function Dockerton() {
 
         return self;
     };
+
+    /**
+     * Adds an ARG to the Dockerfile.
+     *
+     * See http://docs.docker.com/engine/reference/builder/#arg
+     *
+     * If only a key is specified, will be used in `ARG key` format.
+     * If a value is specified, will be used in `ARG key=value` format.
+     *
+     * @param arg {String}
+     * @param [defaultValue] {String} Optional default value for the argument
+     */
+    self.arg = function(arg, defaultValue) {
+        if (defaultValue !== undefined && defaultValue !== null) {
+            self._commands.push(util.format("ARG %s=%s", arg, defaultValue));
+        } else {
+            self._commands.push(
+                _constructSimpleCommand("ARG", arg)
+            );
+        }
+
+        return self;
+    };
 }
 
 /**

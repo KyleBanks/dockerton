@@ -273,24 +273,26 @@ new Dockerton()
     .user('kyle') // -> USER kyle
 ```
 
-### WORKDIR
+### ARG
 
-See [WORKDIR documentation](http://docs.docker.com/engine/reference/builder/#workdir) for more details.
+See [ARG documentation](http://docs.docker.com/engine/reference/builder/#arg) for more details.
 
-*The WORKDIR instruction sets the working directory for any RUN, CMD, ENTRYPOINT, COPY and ADD instructions that follow it in the Dockerfile.*
+*The ARG instruction defines a variable that users can pass at build-time to the builder with the docker build command using the --build-arg <varname>=<value> flag. If a user specifies a build argument that was not defined in the Dockerfile, the build outputs an error.*
 
 ##### Usage
 
 ```node
-dockerton.workdir(dir);
+dockerton.arg(arg, default);
 ```
 
-- **dir**: The directory to use with WORKDIR.
+- **arg**: The name of the ARG.
+- **default** *(Optional)*: The default value of the ARG.
  
 ##### Examples
 ```node
 new Dockerton()
-    .workdir('/path/to/dir') // -> WORKDIR /path/to/dir
+    .arg('myArg') // -> ARG myArg
+    .arg('anotherArg', 'withDefault') // -> ARG anotherArg=withDefault
 ```
 
 ## License
