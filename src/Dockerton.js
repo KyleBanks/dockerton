@@ -102,6 +102,26 @@ function Dockerton() {
 
         return self;
     };
+
+    /**
+     * Adds a CMD command to the Dockerfile.
+     *
+     * See http://docs.docker.com/engine/reference/builder/#cmd
+     *
+     * If the `commands` argument provided is a String, it will be used in `CMD <command>` format, otherwise
+     * if it's an Array, it will be using in `CMD ["command1", "command2", ...]` format.
+     *
+     * @param commands {Array || String}
+     */
+    this.cmd = function(commands) {
+        if (commands instanceof Array) {
+            self._commands.push(util.format('CMD ["%s"]', commands.join("\", \"")));
+        } else {
+            self._commands.push(util.format('CMD %s', commands));
+        }
+
+        return self;
+    };
 }
 
 /**

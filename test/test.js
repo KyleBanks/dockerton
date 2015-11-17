@@ -63,7 +63,7 @@ describe('Dockerton', function() {
     /**
      * from
      */
-    it('from: works without a tag', function(done) {
+    it('FROM: works without a tag', function(done) {
         var d = _new();
         d.from('sample');
 
@@ -73,7 +73,7 @@ describe('Dockerton', function() {
         done();
     });
 
-    it ('from: works with a null tag', function(done) {
+    it ('FROM: works with a null tag', function(done) {
         var d = _new();
         d.from('sample', null);
 
@@ -83,7 +83,7 @@ describe('Dockerton', function() {
         done();
     });
 
-    it('from: works with an empty tag', function(done) {
+    it('FROM: works with an empty tag', function(done) {
         var d = _new();
         d.from('sample', '');
 
@@ -93,7 +93,7 @@ describe('Dockerton', function() {
         done();
     });
 
-    it('from: works with a valid tag', function(done) {
+    it('FROM: works with a valid tag', function(done) {
         var d = _new();
         d.from('sample', '1.2.3');
 
@@ -103,7 +103,7 @@ describe('Dockerton', function() {
         done();
     });
 
-    it('from: can be chained', function(done) {
+    it('FROM: can be chained', function(done) {
         var d = _new()
             .from('sample1', '1.2.3')
             .from('sample2', '3.2.1');
@@ -118,7 +118,7 @@ describe('Dockerton', function() {
     /**
      * maintainer
      */
-    it('maintainer: adds a valid maintainer', function(done) {
+    it('MAINTAINER: adds a valid maintainer', function(done) {
         var d = _new();
         d.maintainer('Kyle');
 
@@ -128,7 +128,7 @@ describe('Dockerton', function() {
         done();
     });
 
-    it('maintainer: can be chained', function(done) {
+    it('MAINTAINER: can be chained', function(done) {
         var d = _new()
             .maintainer('author1')
             .maintainer('author2');
@@ -143,7 +143,7 @@ describe('Dockerton', function() {
     /**
      * run
      */
-    it('run: adds a simple command', function(done) {
+    it('RUN: adds a simple command', function(done) {
         var d = _new();
         d.run('cd test');
 
@@ -153,7 +153,7 @@ describe('Dockerton', function() {
         done();
     });
 
-    it('run: adds a single command in an array', function(done) {
+    it('RUN: adds a single command in an array', function(done) {
         var d = _new();
         d.run(['cd test']);
 
@@ -163,7 +163,7 @@ describe('Dockerton', function() {
         done();
     });
 
-    it('run: adds multiple commands in an array', function(done) {
+    it('RUN: adds multiple commands in an array', function(done) {
         var d = _new();
         d.run(['cd test', 'echo hey']);
 
@@ -173,7 +173,7 @@ describe('Dockerton', function() {
         done();
     });
 
-    it('run: escapes quotes in a command', function(done) {
+    it('RUN: escapes quotes in a command', function(done) {
         var d = _new();
         d.run(['cd test', 'echo "hey"']);
 
@@ -183,7 +183,7 @@ describe('Dockerton', function() {
         done();
     });
 
-    it('run: can be chained', function(done) {
+    it('RUN: can be chained', function(done) {
         var d = _new()
             .run('cd test')
             .run(['echo "hey"', 'echo "howdy"']);
@@ -191,6 +191,61 @@ describe('Dockerton', function() {
         d._commands.length.should.equal(2);
         d._commands[0].should.equal('RUN cd test');
         d._commands[1].should.equal('RUN ["echo \"hey\"", "echo \"howdy\""]');
+
+        done();
+    });
+
+    /**
+     * cmd
+     */
+    it('CMD: adds a simple command', function(done) {
+        var d = _new();
+        d.cmd('npm start');
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('CMD npm start');
+
+        done();
+    });
+
+    it('CMD: adds a single command in an array', function(done) {
+        var d = _new();
+        d.cmd(['npm start']);
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('CMD ["npm start"]');
+
+        done();
+    });
+
+    it('CMD: adds multiple commands in an array', function(done) {
+        var d = _new();
+        d.cmd(['cd test', 'npm start']);
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('CMD ["cd test", "npm start"]');
+
+        done();
+    });
+
+    it('CMD: escapes quotes in a command', function(done) {
+        var d = _new();
+        d.cmd(['cd test', 'echo "hey"']);
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('CMD ["cd test", "echo \"hey\""]');
+
+        done();
+    });
+
+    it('CMD: can be chained', function(done) {
+        var d = _new()
+            .cmd('cd test')
+            .cmd(['echo "hey"', 'echo "howdy"']);
+
+        d._commands.length.should.equal(2);
+        d._commands[0].should.equal('CMD cd test');
+        d._commands[1].should.equal('CMD ["echo \"hey\"", "echo \"howdy\""]');
 
         done();
     });

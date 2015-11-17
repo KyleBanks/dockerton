@@ -57,8 +57,30 @@ dockerton.run(commands);
 ```
 
 - **commands**: Either a `String` or `Array` of commands to be RUN.
-    - If the `commands` argument provided is a String, it will be used in `RUN <command>` format, otherwise
-    if it's an Array, it will be using in `RUN ["command1", "command2", ...]` format.
+   - If the `commands` argument provided is a String, it will be used in `RUN <command>` format, otherwise
+   if it's an Array, it will be using in `RUN ["command1", "command2", ...]` format.
+   
+#### Examples
+```node
+new Dockerton()
+   .run('echo hey') // -> RUN echo hey
+   .run(['cd examples', 'node whalesay.js']) // -> RUN ["cd examples", "node whalesay.js"] 
+```
+
+### CMD
+
+See [CMD documentation](http://docs.docker.com/engine/reference/builder/#cmd) for more details.
+
+*The main purpose of a CMD is to provide defaults for an executing container. These defaults can include an executable, or they can omit the executable, in which case you must specify an ENTRYPOINT instruction as well.*
+
+#### Usage
+```node
+dockerton.cmd(commands);
+```
+
+- **commands**: Either a `String` or `Array` of commands to be used with CMD.
+    - If the `commands` argument provided is a String, it will be used in `CMD <command>` format, otherwise
+    if it's an Array, it will be using in `CMD ["command1", "command2", ...]` format.
     
 #### Examples
 ```node
@@ -66,7 +88,6 @@ new Dockerton()
     .run('echo hey') // -> RUN echo hey
     .run(['cd examples', 'node whalesay.js']) // -> RUN ["cd examples", "node whalesay.js"] 
 ```
-
 
 ## License
 ```
