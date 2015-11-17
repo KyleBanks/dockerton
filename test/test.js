@@ -56,6 +56,7 @@ describe('Dockerton', function() {
         expect(d).to.be.a('object');
         d._commands.should.be.a('array');
         d._commands.length.should.equal(0);
+        expect(d._generated).to.equal(null);
 
         done();
     });
@@ -759,6 +760,39 @@ describe('Dockerton', function() {
         d._commands[0].should.equal('STOPSIGNAL 1');
         d._commands[1].should.equal('STOPSIGNAL sig2');
 
+        done();
+    });
+
+    /**
+     * generate
+     */
+    it('generate: constructs an empty Dockerfile', function(done) {
+        var d = _new()
+            .generate();
+
+        expect(d._generated).to.be.a('string');
+        expect(d._generated.length).to.equal(0);
+
+        done();
+    });
+
+    it('generate: constructs a Dockerfile with a single command', function(done) {
+        var d = _new()
+            .from("test")
+            .generate();
+
+        expect(d._generated).to.equal("FROM test");
+        done();
+    });
+
+    it('generate: constructs a Dockerfile with multiple commands', function(done) {
+        var d = _new()
+            .from("test")
+            .maintainer("kyle")
+            .cmd('echo TEST')
+            .generate();
+
+        expect(d._generated).to.equal('FROM test\nMAINTAINER kyle\nCMD echo TEST');
         done();
     });
 });

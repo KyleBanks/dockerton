@@ -31,21 +31,25 @@ function Dockerton() {
     self._commands = [];
 
     /**
-     * Contains the generated Dockerfile content.
+     * Contains the generated Dockerfile contents.
      *
      * @type {String}
      */
     self._generated = null;
 
     /**
-     * Generates the Dockerfile from the commands that have been issued.
+     * Generates the Dockerfile contents from the commands that have been issued.
      *
-     * @param options {Object}
+     * @param [options] {Object}
      * @param [options.destination] {String} If set, will write the Dockerfile to the specified location.
      *
      * @returns {Dockerton}
      */
     self.generate = function(options) {
+        // Default options to an empty object
+        options = options || {};
+
+        // Generate the contents
         self._generated = self._commands.join("\n");
 
         if (options.destination) {
