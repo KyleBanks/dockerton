@@ -382,6 +382,23 @@ function Dockerton() {
 
         return self;
     };
+
+    /**
+     * Adds a WORKDIR to the Dockerfile.
+     *
+     * See http://docs.docker.com/engine/reference/builder/#workdir
+     *
+     * @param dir {String} The directory to use with WORKDIR.
+     *
+     * @return {Dockerton}
+     */
+    self.workdir = function(dir) {
+        self._commands.push(
+            _constructSimpleCommand("WORKDIR", dir)
+        );
+
+        return self;
+    };
 }
 
 /**

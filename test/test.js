@@ -641,4 +641,29 @@ describe('Dockerton', function() {
 
         done();
     });
+
+    /**
+     * workdir
+     */
+    it('WORKDIR: adds a valid working directory', function(done) {
+        var d = _new();
+        d.workdir('dir');
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('WORKDIR dir');
+
+        done();
+    });
+
+    it('WORKDIR: can be chained', function(done) {
+        var d = _new()
+            .workdir('dir1')
+            .workdir('/dir2/');
+
+        d._commands.length.should.equal(2);
+        d._commands[0].should.equal('WORKDIR dir1');
+        d._commands[1].should.equal('WORKDIR /dir2/');
+
+        done();
+    });
 });

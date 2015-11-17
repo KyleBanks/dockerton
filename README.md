@@ -273,6 +273,26 @@ new Dockerton()
     .user('kyle') // -> USER kyle
 ```
 
+### WORKDIR
+
+See [WORKDIR documentation](http://docs.docker.com/engine/reference/builder/#workdir) for more details.
+
+*The WORKDIR instruction sets the working directory for any RUN, CMD, ENTRYPOINT, COPY and ADD instructions that follow it in the Dockerfile.*
+
+##### Usage
+
+```node
+dockerton.workdir(dir);
+```
+
+- **dir**: The directory to use with WORKDIR.
+ 
+##### Examples
+```node
+new Dockerton()
+    .workdir('/path/to/dir') // -> WORKDIR /path/to/dir
+```
+
 ## License
 ```
 The MIT License (MIT)
