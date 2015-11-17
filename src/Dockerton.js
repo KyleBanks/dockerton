@@ -116,8 +116,8 @@ function Dockerton() {
      *
      * See http://docs.docker.com/engine/reference/builder/#run
      *
-     * If the `commands` argument provided is a String, it will be used in `RUN <command>` format, otherwise
-     * if it's an Array, it will be using in `RUN ["command1", "command2", ...]` format.
+     * If the `commands` argument provided is a String, it will be used in `RUN <command>` format.
+     * If the `commands` argument provided is an Array, it will be using in `RUN ["command1", "command2", ...]` format.
      *
      * @param commands {Array || String}
      *
@@ -143,8 +143,8 @@ function Dockerton() {
      *
      * See http://docs.docker.com/engine/reference/builder/#cmd
      *
-     * If the `commands` argument provided is a String, it will be used in `CMD <command>` format, otherwise
-     * if it's an Array, it will be using in `CMD ["command1", "command2", ...]` format.
+     * If the `commands` argument provided is a String, it will be used in `CMD <command>` format.
+     * If the `commands` argument provided is an Array, it will be using in `CMD ["command1", "command2", ...]` format.
      *
      * @param commands {Array || String}
      *
@@ -179,7 +179,7 @@ function Dockerton() {
      *      key: value
      *  })
      *
-     * @param key {String}
+     * @param key {String || Object}
      * @param value {String}
      *
      * @return {Dockerton}
@@ -198,6 +198,28 @@ function Dockerton() {
 
 
             self._commands.push(util.format('LABEL %s', keyValuePairs.join(' \\\n\t')));
+        }
+
+        return self;
+    };
+
+    /**
+     * Adds an EXPOSE to the Dockerfile.
+     *
+     * See http://docs.docker.com/engine/reference/builder/#expose
+     *
+     * If the `ports` argument provided is a Number, a single port will be exposed like so: `EXPOSE port`.
+     * If the `ports` argument provided is an Array, multiple ports will be exposed like so: `EXPOSE port1 port2 ... portN`.
+     *
+     * @param ports {Array || Number}
+     *
+     * @return {Dockerton}
+     */
+    self.expose = function(ports) {
+        if (ports instanceof Array) {
+            self._commands.push(util.format('EXPOSE %s', ports.join(" ")));
+        } else {
+            self._commands.push(util.format('EXPOSE %s', ports));
         }
 
         return self;

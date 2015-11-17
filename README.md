@@ -57,8 +57,8 @@ dockerton.run(commands);
 ```
 
 - **commands**: Either a `String` or `Array` of commands to be RUN.
-   - If the `commands` argument provided is a String, it will be used in `RUN <command>` format, otherwise
-   if it's an Array, it will be using in `RUN ["command1", "command2", ...]` format.
+   - If the `commands` argument provided is a String, it will be used in `RUN <command>` format.
+   - If the `commands` argument provided is an Array, it will be using in `RUN ["command1", "command2", ...]` format.
    
 ##### Examples
 ```node
@@ -79,8 +79,8 @@ dockerton.cmd(commands);
 ```
 
 - **commands**: Either a `String` or `Array` of commands to be used with CMD.
-    - If the `commands` argument provided is a String, it will be used in `CMD <command>` format, otherwise
-    if it's an Array, it will be using in `CMD ["command1", "command2", ...]` format.
+    - If the `commands` argument provided is a String, it will be used in `CMD <command>` format.
+    - If the `commands` argument provided is an Array, it will be using in `CMD ["command1", "command2", ...]` format.
     
 ##### Examples
 ```node
@@ -113,6 +113,28 @@ new Dockerton()
     .label("env", "prod") // -> LABEL "env"="prod"
     .label({ env: "prod", country: "CA" }) // -> LABEL "env"="prod" \
                                                        "country"="CA"
+```
+
+### EXPOSE
+
+See [EXPOSE documentation](http://docs.docker.com/engine/reference/builder/#expose) for more details.
+
+*The EXPOSE instruction informs Docker that the container listens on the specified network ports at runtime.*
+
+##### Usage
+```node
+dockerton.expose(ports);
+```
+
+- **ports**: Either Number or Array of Numbers to be exposed.
+    - If the `ports` argument provided is a Number, a single port will be exposed like so: `EXPOSE port`.
+    - If the `ports` argument provided is an Array, multiple ports will be exposed like so: `EXPOSE port1 port2 ... portN`.
+    
+##### Examples
+```node
+new Dockerton()
+    .expose(80) // -> EXPOSE 80
+    .expose([80, 8080]) // -> EXPOSE 80 8080
 ```
 
 ## License

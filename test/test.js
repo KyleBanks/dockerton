@@ -316,4 +316,48 @@ describe('Dockerton', function() {
         done();
     });
 
+    /**
+     * expose
+     */
+    it('EXPOSE: adds a single port', function(done) {
+        var d = _new();
+        d.expose(80);
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('EXPOSE 80');
+
+        done();
+    });
+
+    it('EXPOSE: adds an array of ports of length 1', function(done) {
+        var d = _new();
+        d.expose([80]);
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('EXPOSE 80');
+
+        done();
+    });
+
+    it('EXPOSE: adds an array of ports of length > 1', function(done) {
+        var d = _new();
+        d.expose([80, 81, 82]);
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('EXPOSE 80 81 82');
+
+        done();
+    });
+
+    it('EXPOSE: can be chained', function(done) {
+        var d = _new()
+            .expose(80)
+            .expose(81);
+
+        d._commands.length.should.equal(2);
+        d._commands[0].should.equal('EXPOSE 80');
+        d._commands[1].should.equal('EXPOSE 81');
+
+        done();
+    });
 });
