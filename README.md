@@ -163,6 +163,29 @@ new Dockerton()
                                                    country="CA"
 ```
 
+### ADD
+
+See [ADD documentation](http://docs.docker.com/engine/reference/builder/#add) for more details.
+
+*The ADD instruction copies new files, directories or remote file URLs from <src> and adds them to the filesystem of the container at the path <dest>.*
+
+##### Usage
+```node
+dockerton.add(sources, destination);
+```
+
+- **sources**: Either a `String` or `Array` of source files/directories to be added.
+   - If the `sources` argument provided is a String, it will be used in `ADD src dest` format.
+   - If the `sources` argument provided is an Array, it will be used in `ADD ["src1", "src2", ... "dest"]` format.
+- **destination**: The destination to which the sources will be added.
+   
+##### Examples
+```node
+new Dockerton()
+   .add('source/', 'dest/') // -> ADD source/ dest/
+   .add(['index.html', 'app.js'], 'dest/') // -> ADD ["index.html", "app.js", "dest/"] 
+```
+
 ## License
 ```
 The MIT License (MIT)

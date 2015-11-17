@@ -91,7 +91,7 @@ function Dockerton() {
     });
 
     /**
-     * Sets the base image for subsequent instructions.
+     * Adds a FROM to the Dockerfile.
      *
      * See http://docs.docker.com/engine/reference/builder/#from
      *
@@ -112,7 +112,7 @@ function Dockerton() {
     };
 
     /**
-     * Adds a RUN command to the Dockerfile.
+     * Adds a RUN to the Dockerfile.
      *
      * See http://docs.docker.com/engine/reference/builder/#run
      *
@@ -127,7 +127,7 @@ function Dockerton() {
         if (commands instanceof Array) {
             commands = _escapeStringArray(commands);
 
-            self._commands.push(util.format('RUN ["%s"]', commands.join("\", \"")));
+            self._commands.push(util.format('RUN ["%s"]', commands.join('", "')));
         } else {
             var command = commands;
             command = _escapeString(command);
@@ -139,7 +139,7 @@ function Dockerton() {
     };
 
     /**
-     * Adds a CMD command to the Dockerfile.
+     * Adds a CMD to the Dockerfile.
      *
      * See http://docs.docker.com/engine/reference/builder/#cmd
      *
@@ -154,7 +154,7 @@ function Dockerton() {
         if (commands instanceof Array) {
             commands = _escapeStringArray(commands);
 
-            self._commands.push(util.format('CMD ["%s"]', commands.join("\", \"")));
+            self._commands.push(util.format('CMD ["%s"]', commands.join('", "')));
         } else {
             var command = commands;
             command = _escapeString(command);
@@ -256,6 +256,31 @@ function Dockerton() {
             });
 
             self._commands.push(util.format('ENV %s', keyValuePairs.join(' \\\n\t')));
+        }
+
+        return self;
+    };
+
+    /**
+     * Adds an ADD to the Dockerfile.
+     *
+     * See http://docs.docker.com/engine/reference/builder/#add
+     *
+     * If the `sources` argument provided is a String, it will be used in `ADD src dest` format.
+     * If the `sources` argument provided is an Array, it will be used in `ADD ["src1", "src2", ... "dest"]` format.
+     *
+     * @param sources {String || Array}
+     * @param destination {String}
+     *
+     * @returns {Dockerton}
+     */
+    self.add = function(sources, destination) {
+        if (sources instanceof Array) {
+            sources = _escapeStringArray(sources);
+
+            self._commands.push(util.format('ADD ["%s", "%s"]', sources.join('", "'), destination));
+        } else {
+            self._commands.push(util.format("ADD %s %s", _escapeString(sources), _escapeString(destination)));
         }
 
         return self;

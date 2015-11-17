@@ -426,4 +426,49 @@ describe('Dockerton', function() {
 
         done();
     });
+
+    /**
+     * add
+     */
+    it('ADD: adds a single file', function(done) {
+        var d = _new()
+            .add('src', 'dest');
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal("ADD src dest");
+
+        done();
+    });
+
+    it('ADD: adds a single file in an array', function(done) {
+        var d = _new()
+            .add(['src'], 'dest');
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('ADD ["src", "dest"]');
+
+        done();
+    });
+
+    it('ADD: adds multiple files in an array', function(done) {
+        var d = _new()
+            .add(['src1', 'src2'], 'dest');
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('ADD ["src1", "src2", "dest"]');
+
+        done();
+    });
+
+    it('ADD: can be chained', function(done) {
+        var d = _new()
+            .add(['src1', 'src2'], 'dest1')
+            .add(['src3', 'src4'], 'dest2');
+
+        d._commands.length.should.equal(2);
+        d._commands[0].should.equal('ADD ["src1", "src2", "dest1"]');
+        d._commands[1].should.equal('ADD ["src3", "src4", "dest2"]');
+
+        done();
+    });
 });
