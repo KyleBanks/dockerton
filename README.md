@@ -89,6 +89,32 @@ new Dockerton()
     .cmd(['cd examples', 'node whalesay.js']) // -> CMD ["cd examples", "node whalesay.js"] 
 ```
 
+### LABEL
+
+See [LABEL documentation](http://docs.docker.com/engine/reference/builder/#label) for more details.
+
+*The LABEL instruction adds metadata to an image. A LABEL is a key-value pair. To include spaces within a LABEL value, use quotes and backslashes as you would in command-line parsing.*
+
+##### Usage
+```node
+dockerton.label(key, value)
+         .label(map);
+```
+
+`label` supports two usages, either by providing a key and value or a map containing key-value pairs.
+
+- **key**: A single key String.
+- **value**: A single value String.
+- **map**: An object containing any number of key-value pairs. All keys and values are treated as strings and added to the LABEL.
+
+##### Examples
+```node
+new Dockerton()
+    .label("env", "prod") // -> LABEL "env"="prod"
+    .label({ env: "prod", country: "CA" }) // -> LABEL "env"="prod" \
+                                                       "country"="CA"
+```
+
 ## License
 ```
 The MIT License (MIT)

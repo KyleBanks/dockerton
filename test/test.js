@@ -178,7 +178,7 @@ describe('Dockerton', function() {
         d.run(['cd test', 'echo "hey"']);
 
         d._commands.length.should.equal(1);
-        d._commands[0].should.equal('RUN ["cd test", "echo \"hey\""]');
+        d._commands[0].should.equal('RUN ["cd test", "echo \\"hey\\""]');
 
         done();
     });
@@ -190,7 +190,7 @@ describe('Dockerton', function() {
 
         d._commands.length.should.equal(2);
         d._commands[0].should.equal('RUN cd test');
-        d._commands[1].should.equal('RUN ["echo \"hey\"", "echo \"howdy\""]');
+        d._commands[1].should.equal('RUN ["echo \\"hey\\"", "echo \\"howdy\\""]');
 
         done();
     });
@@ -233,7 +233,7 @@ describe('Dockerton', function() {
         d.cmd(['cd test', 'echo "hey"']);
 
         d._commands.length.should.equal(1);
-        d._commands[0].should.equal('CMD ["cd test", "echo \"hey\""]');
+        d._commands[0].should.equal('CMD ["cd test", "echo \\"hey\\""]');
 
         done();
     });
@@ -245,7 +245,73 @@ describe('Dockerton', function() {
 
         d._commands.length.should.equal(2);
         d._commands[0].should.equal('CMD cd test');
-        d._commands[1].should.equal('CMD ["echo \"hey\"", "echo \"howdy\""]');
+        d._commands[1].should.equal('CMD ["echo \\"hey\\"", "echo \\"howdy\\""]');
+
+        done();
+    });
+
+    /**
+     * label
+     */
+    it('LABEL: adds a simple label', function(done) {
+        var d = _new()
+            .label('key', 'value');
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal("LABEL \"key\"=\"value\"");
+
+        done();
+    });
+
+    it('LABEL: adds a single label in a map', function(done) {
+        var d = _new()
+            .label({
+                key: "value"
+            });
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal("LABEL \"key\"=\"value\"");
+
+        done();
+    });
+
+    it('LABEL: adds multiple labels', function(done) {
+        var d = _new()
+            .label({
+                key: 'value',
+                key2: 'value2'
+            });
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('LABEL "key"="value" \\\n\t"key2"="value2"');
+
+        done();
+    });
+
+    it('LABEL: escapes quotes in a label', function(done) {
+        var d = _new()
+            .label({
+                'keyWith"': 'valueWith"'
+            });
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal('LABEL "keyWith\\""="valueWith\\""');
+
+        done();
+    });
+
+    it('LABEL: can be chained', function(done) {
+        var d = _new()
+            .label({
+                l1: "v1"
+            })
+            .label({
+                l2: "v2"
+            });
+
+        d._commands.length.should.equal(2);
+        d._commands[0].should.equal('LABEL "l1"="v1"');
+        d._commands[1].should.equal('LABEL "l2"="v2"');
 
         done();
     });

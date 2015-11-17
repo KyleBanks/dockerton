@@ -36,6 +36,34 @@ var SIMPLE_COMMANDS = [
 ];
 
 /**
+ * Escapes a String for use with Dockerfile commands.
+ *
+ * @param input {String}
+ * @returns {String}
+ */
+function _escapeString(input) {
+    if (input) {
+        input = input.replace(/"/g, "\\\"");
+    }
+
+    return input;
+}
+
+/**
+ * Escapes an Array of Strings for use with Dockerfile commands.
+ *
+ * @param input {Array}
+ * @returns {Array}
+ */
+function _escapeStringArray(input) {
+    for (var i = 0; i < input.length; i++) {
+        input[i] = _escapeString(input[i]);
+    }
+
+    return input;
+}
+
+/**
  * Dockerton Constructor
  *
  * @constructor
@@ -72,7 +100,7 @@ function Dockerton() {
      *
      * @return {Dockerton}
      */
-    this.from = function(image, tag) {
+    self.from = function(image, tag) {
         var command = image;
         if (tag && tag.length) {
             command = command + FROM_IMAGE_TAG_SEPARATOR + tag;
@@ -92,12 +120,19 @@ function Dockerton() {
      * if it's an Array, it will be using in `RUN ["command1", "command2", ...]` format.
      *
      * @param commands {Array || String}
+     *
+     * @return {Dockerton}
      */
-    this.run = function(commands) {
+    self.run = function(commands) {
         if (commands instanceof Array) {
+            commands = _escapeStringArray(commands);
+
             self._commands.push(util.format('RUN ["%s"]', commands.join("\", \"")));
         } else {
-            self._commands.push(util.format('RUN %s', commands));
+            var command = commands;
+            command = _escapeString(command);
+
+            self._commands.push(util.format('RUN %s', command));
         }
 
         return self;
@@ -112,12 +147,57 @@ function Dockerton() {
      * if it's an Array, it will be using in `CMD ["command1", "command2", ...]` format.
      *
      * @param commands {Array || String}
+     *
+     * @return {Dockerton}
      */
-    this.cmd = function(commands) {
+    self.cmd = function(commands) {
         if (commands instanceof Array) {
+            commands = _escapeStringArray(commands);
+
             self._commands.push(util.format('CMD ["%s"]', commands.join("\", \"")));
         } else {
-            self._commands.push(util.format('CMD %s', commands));
+            var command = commands;
+            command = _escapeString(command);
+
+            self._commands.push(util.format('CMD %s', command));
+        }
+
+        return self;
+    };
+
+    /**
+     * Adds a LABEL to the Dockerfile.
+     *
+     * See http://docs.docker.com/engine/reference/builder/#label
+     *
+     * If a key and value is passed, constructs a simple key-value pair label, otherwise if an object is passed,
+     * constructs a LABEL command using the object key-value pairs as the label key-value pairs.
+     *
+     * For example, can be used in either form:
+     *  .label(key, value)
+     *  .label({
+     *      key: value
+     *  })
+     *
+     * @param key {String}
+     * @param value {String}
+     *
+     * @return {Dockerton}
+     */
+    self.label = function(key, value) {
+        if (typeof key === 'string') {
+            self._commands.push(util.format('LABEL "%s"="%s"', key, value));
+        } else {
+            var map = key,
+                keyValuePairs = [];
+
+            // Iterate the keys in the map, and add each as a key value pair
+            Object.keys(map).forEach(function(key) {
+                keyValuePairs.push(util.format('"%s"="%s"', _escapeString(key), _escapeString(map[key])));
+            });
+
+
+            self._commands.push(util.format('LABEL %s', keyValuePairs.join(' \\\n\t')));
         }
 
         return self;
