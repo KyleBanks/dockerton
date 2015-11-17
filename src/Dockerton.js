@@ -410,6 +410,8 @@ function Dockerton() {
      *
      * @param arg {String}
      * @param [defaultValue] {String} Optional default value for the argument
+     *
+     * @return {Dockerton}
      */
     self.arg = function(arg, defaultValue) {
         if (defaultValue !== undefined && defaultValue !== null) {
@@ -419,6 +421,40 @@ function Dockerton() {
                 _constructSimpleCommand("ARG", arg)
             );
         }
+
+        return self;
+    };
+
+    /**
+     * Adds an ONBUILD to the Dockerfile.
+     *
+     * See http://docs.docker.com/engine/reference/builder/#onbuild
+     *
+     * @param command {String}
+     *
+     * @return {Dockerton}
+     */
+    self.onbuild = function(command) {
+        self._commands.push(
+            _constructSimpleCommand("ONBUILD", command)
+        );
+
+        return self;
+    };
+
+    /**
+     * Adds an STOPSIGNAL to the Dockerfile.
+     *
+     * See http://docs.docker.com/engine/reference/builder/#stopsignal
+     *
+     * @param signal {Number || String}
+     *
+     * @return {Dockerton}
+     */
+    self.stopsignal = function(signal) {
+        self._commands.push(
+            _constructSimpleCommand("STOPSIGNAL", signal.toString())
+        );
 
         return self;
     };

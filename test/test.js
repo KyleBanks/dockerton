@@ -701,4 +701,64 @@ describe('Dockerton', function() {
 
         done();
     });
+
+    /**
+     * onbuild
+     */
+    it('ONBUILD: adds a simple ONBUILD command', function(done) {
+        var d = _new()
+            .onbuild('ADD /src /dest');
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal("ONBUILD ADD /src /dest");
+
+        done();
+    });
+
+    it('ONBUILD: can be chained', function(done) {
+        var d = _new()
+            .onbuild('cmd1')
+            .onbuild('cmd2');
+
+        d._commands.length.should.equal(2);
+        d._commands[0].should.equal('ONBUILD cmd1');
+        d._commands[1].should.equal('ONBUILD cmd2');
+
+        done();
+    });
+
+    /**
+     * stopsignal
+     */
+    it('STOPSIGNAL: adds a simple signal (String)', function(done) {
+        var d = _new()
+            .stopsignal('sig1');
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal("STOPSIGNAL sig1");
+
+        done();
+    });
+
+    it('STOPSIGNAL: adds a simple signal (Number)', function(done) {
+        var d = _new()
+            .stopsignal(1);
+
+        d._commands.length.should.equal(1);
+        d._commands[0].should.equal("STOPSIGNAL 1");
+
+        done();
+    });
+
+    it('STOPSIGNAL: can be chained', function(done) {
+        var d = _new()
+            .stopsignal(1)
+            .stopsignal('sig2');
+
+        d._commands.length.should.equal(2);
+        d._commands[0].should.equal('STOPSIGNAL 1');
+        d._commands[1].should.equal('STOPSIGNAL sig2');
+
+        done();
+    });
 });

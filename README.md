@@ -295,6 +295,47 @@ new Dockerton()
     .arg('anotherArg', 'withDefault') // -> ARG anotherArg=withDefault
 ```
 
+### ONBUILD
+
+See [ONBUILD documentation](http://docs.docker.com/engine/reference/builder/#onbuild) for more details.
+
+*The ONBUILD instruction adds to the image a trigger instruction to be executed at a later time, when the image is used as the base for another build.*
+
+##### Usage
+
+```node
+dockerton.onbuild(command);
+```
+
+- **command**: The command to run with ONBUILD.
+ 
+##### Examples
+```node
+new Dockerton()
+    .onbuild('ADD src/ dest/') // -> ONBUILD ADD src/ dest/
+```
+
+### STOPSIGNAL
+
+See [STOPSIGNAL documentation](http://docs.docker.com/engine/reference/builder/#stopsignal) for more details.
+
+*The STOPSIGNAL instruction sets the system call signal that will be sent to the container to exit.*
+
+##### Usage
+
+```node
+dockerton.stopsignal(signal);
+```
+
+- **signal**: The signal to stop.
+ 
+##### Examples
+```node
+new Dockerton()
+    .stopsignal(1) // -> STOPSIGNAL 1
+    .stopsignal('sig1') // -> STOPSIGNAL sig1
+```
+
 ## License
 ```
 The MIT License (MIT)
