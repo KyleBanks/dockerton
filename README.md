@@ -85,8 +85,8 @@ dockerton.cmd(commands);
 ##### Examples
 ```node
 new Dockerton()
-    .run('echo hey') // -> RUN echo hey
-    .run(['cd examples', 'node whalesay.js']) // -> RUN ["cd examples", "node whalesay.js"] 
+    .cmd('echo hey') // -> CMD echo hey
+    .cmd(['cd examples', 'node whalesay.js']) // -> CMD ["cd examples", "node whalesay.js"] 
 ```
 
 ## License
