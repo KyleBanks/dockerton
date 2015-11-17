@@ -52,6 +52,17 @@ function Dockerton() {
     self._commands = [];
 
     /**
+     * Add each of the simple commands dynamically.
+     */
+    SIMPLE_COMMANDS.forEach(function(cmd) {
+        self[cmd.toLowerCase()] = function(arg) {
+            self._commands.push(util.format("%s %s", cmd, arg));
+
+            return self;
+        };
+    });
+
+    /**
      * Sets the base image for subsequent instructions.
      *
      * See http://docs.docker.com/engine/reference/builder/#from
@@ -71,17 +82,6 @@ function Dockerton() {
 
         return self;
     };
-
-    /**
-     * Add each of the simple commands dynamically.
-     */
-    SIMPLE_COMMANDS.forEach(function(cmd) {
-        self[cmd.toLowerCase()] = function(arg) {
-            self._commands.push(util.format("%s %s", cmd, arg));
-
-            return self;
-        };
-    });
 
     /**
      * Adds a RUN command to the Dockerfile.

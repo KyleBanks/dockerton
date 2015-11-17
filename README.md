@@ -8,7 +8,7 @@ See [FROM documentation](http://docs.docker.com/engine/reference/builder/#from) 
 
 *The FROM instruction sets the Base Image for subsequent instructions. As such, a valid Dockerfile must have FROM as its first instruction.*
 
-#### Usage
+##### Usage
 
 ```node
 dockerton.from(image, tag);
@@ -17,7 +17,7 @@ dockerton.from(image, tag);
 - **image**: The base image to build off of
 - **tag** *(Optional)*: The version of the image to use
  
-#### Examples
+##### Examples
 ```node
 new Dockerton()
     .from('whalesay') // -> FROM whalesay
@@ -31,7 +31,7 @@ See [MAINTAINER documentation](http://docs.docker.com/engine/reference/builder/#
 
 *The MAINTAINER instruction allows you to set the Author field of the generated images.*
 
-#### Usage
+##### Usage
 
 ```node
 dockerton.maintainer(author);
@@ -39,7 +39,7 @@ dockerton.maintainer(author);
 
 - **author**: The name of the author to display
  
-#### Examples
+##### Examples
 ```node
 new Dockerton()
     .maintainer('Kyle Banks') // -> MAINTAINER Kyle Banks
@@ -51,7 +51,7 @@ See [RUN documentation](http://docs.docker.com/engine/reference/builder/#run) fo
 
 *The RUN instruction will execute any commands in a new layer on top of the current image and commit the results. The resulting committed image will be used for the next step in the Dockerfile.*
 
-#### Usage
+##### Usage
 ```node
 dockerton.run(commands);
 ```
@@ -60,7 +60,7 @@ dockerton.run(commands);
    - If the `commands` argument provided is a String, it will be used in `RUN <command>` format, otherwise
    if it's an Array, it will be using in `RUN ["command1", "command2", ...]` format.
    
-#### Examples
+##### Examples
 ```node
 new Dockerton()
    .run('echo hey') // -> RUN echo hey
@@ -73,7 +73,7 @@ See [CMD documentation](http://docs.docker.com/engine/reference/builder/#cmd) fo
 
 *The main purpose of a CMD is to provide defaults for an executing container. These defaults can include an executable, or they can omit the executable, in which case you must specify an ENTRYPOINT instruction as well.*
 
-#### Usage
+##### Usage
 ```node
 dockerton.cmd(commands);
 ```
@@ -82,7 +82,7 @@ dockerton.cmd(commands);
     - If the `commands` argument provided is a String, it will be used in `CMD <command>` format, otherwise
     if it's an Array, it will be using in `CMD ["command1", "command2", ...]` format.
     
-#### Examples
+##### Examples
 ```node
 new Dockerton()
     .run('echo hey') // -> RUN echo hey
