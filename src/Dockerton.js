@@ -26,16 +26,6 @@ var util = require('util');
 var FROM_IMAGE_TAG_SEPARATOR = ":";
 
 /**
- * "Simple commands" are the ones that only take a single string argument and have no other
- * special usage considerations.
- *
- * @type {Array}
- */
-var SIMPLE_COMMANDS = [
-    "MAINTAINER"
-];
-
-/**
  * Escapes a String for use with Dockerfile commands.
  *
  * @param input {String}
@@ -84,6 +74,17 @@ function _constructStringOrArrayCommand(cmd, array) {
 }
 
 /**
+ * Constructs a simple command that takes only a basic string value.
+ *
+ * @param cmd {String} The name of the command, for example "MAINTAINER".
+ * @param value {String} The value to be used in conjunction with the command.
+ * @returns {String}
+ */
+function _constructSimpleCommand(cmd, value) {
+    return util.format("%s %s", cmd, value);
+}
+
+/**
  * Dockerton Constructor
  *
  * @constructor
@@ -98,17 +99,6 @@ function Dockerton() {
      * @type {Array}
      */
     self._commands = [];
-
-    /**
-     * Add each of the simple commands dynamically.
-     */
-    SIMPLE_COMMANDS.forEach(function(cmd) {
-        self[cmd.toLowerCase()] = function(arg) {
-            self._commands.push(util.format("%s %s", cmd, arg));
-
-            return self;
-        };
-    });
 
     /**
      * Adds a FROM to the Dockerfile.
@@ -126,7 +116,24 @@ function Dockerton() {
             command = command + FROM_IMAGE_TAG_SEPARATOR + tag;
         }
 
-        self._commands.push(util.format("FROM %s", command));
+        self._commands.push(
+            _constructSimpleCommand("FROM", command)
+        );
+
+        return self;
+    };
+
+    /**
+     * Adds a MAINTAINER to the Dockerfile.
+     *
+     * See http://docs.docker.com/engine/reference/builder/#maintainer
+     *
+     * @param maintainer
+     */
+    self.maintainer = function(maintainer) {
+        self._commands.push(
+            _constructSimpleCommand("MAINTAINER", maintainer)
+        );
 
         return self;
     };
@@ -224,7 +231,9 @@ function Dockerton() {
         if (ports instanceof Array) {
             self._commands.push(util.format('EXPOSE %s', ports.join(" ")));
         } else {
-            self._commands.push(util.format('EXPOSE %s', ports));
+            self._commands.push(
+                _constructSimpleCommand("EXPOSE", ports)
+            );
         }
 
         return self;
