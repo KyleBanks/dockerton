@@ -12,77 +12,7 @@
  */
 var util = require('util');
 
-/**
- * @private
- */
-
-/**
- * The String separating the image name and tag on the FROM command.
- *
- * ie. IMAGE<separator>TAG
- *
- * @type {String}
- */
-var FROM_IMAGE_TAG_SEPARATOR = ":";
-
-/**
- * Escapes a String for use with Dockerfile commands.
- *
- * @param input {String}
- * @returns {String}
- */
-function _escapeString(input) {
-    if (input) {
-        input = input.replace(/"/g, "\\\"");
-    }
-
-    return input;
-}
-
-/**
- * Escapes an Array of Strings for use with Dockerfile commands.
- *
- * @param input {Array}
- * @returns {Array}
- */
-function _escapeStringArray(input) {
-    for (var i = 0; i < input.length; i++) {
-        input[i] = _escapeString(input[i]);
-    }
-
-    return input;
-}
-
-/**
- * Constructs a command that requires either a String or an Array.
- *
- * @param cmd {String} The name of the command, for example "RUN"
- * @param array {String || Array} The string/array to be used in conjunction with the command.
- * @returns {String}
- */
-function _constructStringOrArrayCommand(cmd, array) {
-    if (array instanceof Array) {
-        array = _escapeStringArray(array);
-
-        return util.format('%s ["%s"]', cmd, array.join('", "'));
-    } else {
-        var string = array;
-        string = _escapeString(string);
-
-        return util.format('%s %s', cmd, string);
-    }
-}
-
-/**
- * Constructs a simple command that takes only a basic string value.
- *
- * @param cmd {String} The name of the command, for example "MAINTAINER".
- * @param value {String} The value to be used in conjunction with the command.
- * @returns {String}
- */
-function _constructSimpleCommand(cmd, value) {
-    return util.format("%s %s", cmd, value);
-}
+var command_utils = require('./command-utils');
 
 /**
  * Dockerton Constructor
@@ -101,6 +31,31 @@ function Dockerton() {
     self._commands = [];
 
     /**
+     * Contains the generated Dockerfile content.
+     *
+     * @type {String}
+     */
+    self._generated = null;
+
+    /**
+     * Generates the Dockerfile from the commands that have been issued.
+     *
+     * @param options {Object}
+     * @param [options.destination] {String} If set, will write the Dockerfile to the specified location.
+     *
+     * @returns {Dockerton}
+     */
+    self.generate = function(options) {
+        self._generated = self._commands.join("\n");
+
+        if (options.destination) {
+            throw new Error("Unsupported property: destination");
+        }
+
+        return self;
+    };
+
+    /**
      * Adds a FROM to the Dockerfile.
      *
      * See http://docs.docker.com/engine/reference/builder/#from
@@ -113,11 +68,11 @@ function Dockerton() {
     self.from = function(image, tag) {
         var command = image;
         if (tag && tag.length) {
-            command = command + FROM_IMAGE_TAG_SEPARATOR + tag;
+            command = util.format("%s:%s", command, tag);
         }
 
         self._commands.push(
-            _constructSimpleCommand("FROM", command)
+            command_utils.constructSimpleCommand("FROM", command)
         );
 
         return self;
@@ -132,7 +87,7 @@ function Dockerton() {
      */
     self.maintainer = function(maintainer) {
         self._commands.push(
-            _constructSimpleCommand("MAINTAINER", maintainer)
+            command_utils.constructSimpleCommand("MAINTAINER", maintainer)
         );
 
         return self;
@@ -152,7 +107,7 @@ function Dockerton() {
      */
     self.run = function(commands) {
         self._commands.push(
-            _constructStringOrArrayCommand("RUN", commands)
+            command_utils.constructStringOrArrayCommand("RUN", commands)
         );
 
         return self;
@@ -172,7 +127,7 @@ function Dockerton() {
      */
     self.cmd = function(commands) {
         self._commands.push(
-            _constructStringOrArrayCommand("CMD", commands)
+            command_utils.constructStringOrArrayCommand("CMD", commands)
         );
 
         return self;
@@ -206,7 +161,7 @@ function Dockerton() {
 
             // Iterate the keys in the map, and add each as a key value pair
             Object.keys(map).forEach(function(key) {
-                keyValuePairs.push(util.format('"%s"="%s"', _escapeString(key), _escapeString(map[key])));
+                keyValuePairs.push(util.format('"%s"="%s"', command_utils.escapeString(key), command_utils.escapeString(map[key])));
             });
 
             self._commands.push(util.format('LABEL %s', keyValuePairs.join(' \\\n\t')));
@@ -232,7 +187,7 @@ function Dockerton() {
             self._commands.push(util.format('EXPOSE %s', ports.join(" ")));
         } else {
             self._commands.push(
-                _constructSimpleCommand("EXPOSE", ports)
+                command_utils.constructSimpleCommand("EXPOSE", ports)
             );
         }
 
@@ -267,7 +222,7 @@ function Dockerton() {
 
             // Iterate the keys in the map, and add each as a key value pair
             Object.keys(map).forEach(function(key) {
-                keyValuePairs.push(util.format('%s="%s"', key, _escapeString(map[key])));
+                keyValuePairs.push(util.format('%s="%s"', key, command_utils.escapeString(map[key])));
             });
 
             self._commands.push(util.format('ENV %s', keyValuePairs.join(' \\\n\t')));
@@ -292,10 +247,12 @@ function Dockerton() {
     self.add = function(sources, destination) {
         if (sources instanceof Array) {
             self._commands.push(
-                _constructStringOrArrayCommand("ADD", sources.concat(destination))
+                command_utils.constructStringOrArrayCommand("ADD", sources.concat(destination))
             );
         } else {
-            self._commands.push(util.format("ADD %s %s", _escapeString(sources), _escapeString(destination)));
+            self._commands.push(
+                util.format("ADD %s %s", command_utils.escapeString(sources), command_utils.escapeString(destination))
+            );
         }
 
         return self;
@@ -317,10 +274,12 @@ function Dockerton() {
     self.copy = function(sources, destination) {
         if (sources instanceof Array) {
             self._commands.push(
-                _constructStringOrArrayCommand("COPY", sources.concat(destination))
+                command_utils.constructStringOrArrayCommand("COPY", sources.concat(destination))
             );
         } else {
-            self._commands.push(util.format("COPY %s %s", _escapeString(sources), _escapeString(destination)));
+            self._commands.push(
+                util.format("COPY %s %s", command_utils.escapeString(sources), command_utils.escapeString(destination))
+            );
         }
 
         return self;
@@ -340,7 +299,7 @@ function Dockerton() {
      */
     self.entrypoint = function(commands) {
         self._commands.push(
-            _constructStringOrArrayCommand("ENTRYPOINT", commands)
+            command_utils.constructStringOrArrayCommand("ENTRYPOINT", commands)
         );
 
         return self;
@@ -360,7 +319,7 @@ function Dockerton() {
      */
     self.volume = function(volumes) {
         self._commands.push(
-            _constructStringOrArrayCommand("VOLUME", volumes)
+            command_utils.constructStringOrArrayCommand("VOLUME", volumes)
         );
 
         return self;
@@ -377,7 +336,7 @@ function Dockerton() {
      */
     self.user = function(user) {
         self._commands.push(
-            _constructSimpleCommand("USER", user)
+            command_utils.constructSimpleCommand("USER", user)
         );
 
         return self;
@@ -394,7 +353,7 @@ function Dockerton() {
      */
     self.workdir = function(dir) {
         self._commands.push(
-            _constructSimpleCommand("WORKDIR", dir)
+            command_utils.constructSimpleCommand("WORKDIR", dir)
         );
 
         return self;
@@ -418,7 +377,7 @@ function Dockerton() {
             self._commands.push(util.format("ARG %s=%s", arg, defaultValue));
         } else {
             self._commands.push(
-                _constructSimpleCommand("ARG", arg)
+                command_utils.constructSimpleCommand("ARG", arg)
             );
         }
 
@@ -436,7 +395,7 @@ function Dockerton() {
      */
     self.onbuild = function(command) {
         self._commands.push(
-            _constructSimpleCommand("ONBUILD", command)
+            command_utils.constructSimpleCommand("ONBUILD", command)
         );
 
         return self;
@@ -453,7 +412,7 @@ function Dockerton() {
      */
     self.stopsignal = function(signal) {
         self._commands.push(
-            _constructSimpleCommand("STOPSIGNAL", signal.toString())
+            command_utils.constructSimpleCommand("STOPSIGNAL", signal.toString())
         );
 
         return self;
