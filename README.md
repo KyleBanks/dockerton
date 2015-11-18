@@ -57,6 +57,15 @@ docker.dockerfile(options)
     });
 ```
 
+## Examples
+
+The [examples directory](./examples) contains a number of examples of varying complexity. Each can be executed by issuing the following command:
+
+```
+cd examples/
+node <example name>.js
+```
+
 ## Commands
 
 ### dockerfile
@@ -415,6 +424,20 @@ dockerton.stopsignal(signal);
 new Dockerton()
     .stopsignal(1) // -> STOPSIGNAL 1
     .stopsignal('sig1') // -> STOPSIGNAL sig1
+```
+
+## Tests
+
+You can run the tests by executing the following command in the root of the repository:
+
+```
+npm test
+```
+
+Alternatively, you can invoke [mocha](https://mochajs.org/) directly with your own arguments:
+
+```
+mocha --recursive
 ```
 
 ## License
