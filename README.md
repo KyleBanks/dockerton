@@ -2,25 +2,26 @@
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [dockerfile](#dockerfile)
-- [buildImage](#buildimage)
-- [runContainer](#runcontainer)
 - [Commands](#commands)
-    - [FROM](#from)
-    - [MAINTAINER](#maintainer)
-    - [RUN](#run)
-    - [CMD](#cmd)
-    - [LABEL](#label)
-    - [EXPOSE](#expose)
-    - [ENV](#env)
-    - [ADD](#add)
-    - [COPY](#copy)
-    - [ENTRYPOINT](#entrypoint)
-    - [VOLUME](#volume)
-    - [USER](#user)
-    - [ARG](#arg)
-    - [ONBUILD](#onbuild)
-    - [STOPSIGNAL](#stopsignal)
+    - [dockerfile](#dockerfile)
+    - [buildImage](#buildimage)
+    - [runContainer](#runcontainer)
+    - [Docker Commands](#docker-commands)
+        - [FROM](#from)
+        - [MAINTAINER](#maintainer)
+        - [RUN](#run)
+        - [CMD](#cmd)
+        - [LABEL](#label)
+        - [EXPOSE](#expose)
+        - [ENV](#env)
+        - [ADD](#add)
+        - [COPY](#copy)
+        - [ENTRYPOINT](#entrypoint)
+        - [VOLUME](#volume)
+        - [USER](#user)
+        - [ARG](#arg)
+        - [ONBUILD](#onbuild)
+        - [STOPSIGNAL](#stopsignal)
 - [License](#license)
 
 ## Installation
@@ -52,23 +53,25 @@ docker.dockerfile(options)
     .runContainer(options)
 ```
 
-## dockerfile
+## Commands
+
+### dockerfile
 
 Generates the Dockerfile contents from the commands that have been issued.
 
 - **options**: Currently not used.
 
-## buildImage
+### buildImage
 
 - **options**: Currently not used.
 
-## runContainer
+### runContainer
 
 - **options**: Currently not used.
 
-## Commands
+### Docker Commands
 
-### FROM
+#### FROM
 
 See [FROM documentation](http://docs.docker.com/engine/reference/builder/#from) for more details.
 
@@ -91,7 +94,7 @@ new Dockerton()
     .from('whalesay', '1.4.8') // -> FROM whalesay:1.4.8
 ```
 
-### MAINTAINER
+#### MAINTAINER
 
 See [MAINTAINER documentation](http://docs.docker.com/engine/reference/builder/#maintainer) for more details.
 
@@ -111,7 +114,7 @@ new Dockerton()
     .maintainer('Kyle Banks') // -> MAINTAINER Kyle Banks
 ```
 
-### RUN
+#### RUN
 
 See [RUN documentation](http://docs.docker.com/engine/reference/builder/#run) for more details.
 
@@ -133,7 +136,7 @@ new Dockerton()
    .run(['cd examples', 'node whalesay.js']) // -> RUN ["cd examples", "node whalesay.js"] 
 ```
 
-### CMD
+#### CMD
 
 See [CMD documentation](http://docs.docker.com/engine/reference/builder/#cmd) for more details.
 
@@ -155,7 +158,7 @@ new Dockerton()
     .cmd(['cd examples', 'node whalesay.js']) // -> CMD ["cd examples", "node whalesay.js"] 
 ```
 
-### LABEL
+#### LABEL
 
 See [LABEL documentation](http://docs.docker.com/engine/reference/builder/#label) for more details.
 
@@ -181,7 +184,7 @@ new Dockerton()
                                                        "country"="CA"
 ```
 
-### EXPOSE
+#### EXPOSE
 
 See [EXPOSE documentation](http://docs.docker.com/engine/reference/builder/#expose) for more details.
 
@@ -203,7 +206,7 @@ new Dockerton()
     .expose([80, 8080]) // -> EXPOSE 80 8080
 ```
 
-### ENV
+#### ENV
 
 See [ENV documentation](http://docs.docker.com/engine/reference/builder/#env) for more details.
 
@@ -229,7 +232,7 @@ new Dockerton()
                                                    country="CA"
 ```
 
-### ADD
+#### ADD
 
 See [ADD documentation](http://docs.docker.com/engine/reference/builder/#add) for more details.
 
@@ -252,7 +255,7 @@ new Dockerton()
    .add(['index.html', 'app.js'], 'dest/') // -> ADD ["index.html", "app.js", "dest/"] 
 ```
 
-### COPY
+#### COPY
 
 See [COPY](http://docs.docker.com/engine/reference/builder/#copy) for more details.
 
@@ -275,7 +278,7 @@ new Dockerton()
    .copy(['index.html', 'app.js'], 'dest/') // -> COPY ["index.html", "app.js", "dest/"] 
 ```
 
-### ENTRYPOINT
+#### ENTRYPOINT
 
 See [ENTRYPOINT documentation](http://docs.docker.com/engine/reference/builder/#entrypoint) for more details.
 
@@ -297,7 +300,7 @@ new Dockerton()
    .entrypoint(['top', '-b']) // -> ENTRYPOINT ["top", "-b"] 
 ```
 
-### VOLUME
+#### VOLUME
 
 See [VOLUME documentation](http://docs.docker.com/engine/reference/builder/#volume) for more details.
 
@@ -319,7 +322,7 @@ new Dockerton()
    .volume(['/vol2', '/vol3']) // -> VOLUME ["/vol2", "/vol3"] 
 ```
 
-### USER
+#### USER
 
 See [USER documentation](http://docs.docker.com/engine/reference/builder/#user) for more details.
 
@@ -339,7 +342,7 @@ new Dockerton()
     .user('kyle') // -> USER kyle
 ```
 
-### ARG
+#### ARG
 
 See [ARG documentation](http://docs.docker.com/engine/reference/builder/#arg) for more details.
 
@@ -361,7 +364,7 @@ new Dockerton()
     .arg('anotherArg', 'withDefault') // -> ARG anotherArg=withDefault
 ```
 
-### ONBUILD
+#### ONBUILD
 
 See [ONBUILD documentation](http://docs.docker.com/engine/reference/builder/#onbuild) for more details.
 
@@ -381,7 +384,7 @@ new Dockerton()
     .onbuild('ADD src/ dest/') // -> ONBUILD ADD src/ dest/
 ```
 
-### STOPSIGNAL
+#### STOPSIGNAL
 
 See [STOPSIGNAL documentation](http://docs.docker.com/engine/reference/builder/#stopsignal) for more details.
 
