@@ -40,3 +40,5 @@ Dockerfile
 
 ./.ebextensions/
 .password.test.properties
+
+test/tmp/
