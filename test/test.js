@@ -820,6 +820,23 @@ describe('Dockerton', function() {
             .catch(done);
     });
 
+    it('dockerfile: allows a custom path', function(done) {
+        var d = _new()
+            .from("test");
+
+        d.dockerfile({
+            outputFile: '/tmp/DockerfilePathTest' + new Date().getTime()
+        }).then(function(contents) {
+            var expected = "FROM test";
+
+            expect(contents).to.equal(expected);
+            expect(d._dockerfile).to.equal(expected);
+            expect(fs.readFileSync('/tmp/DockerfilePathTest', 'utf8')).to.equal(expected);
+
+            done();
+        }).catch(done);
+    });
+
     /**
      * buildImage
      */

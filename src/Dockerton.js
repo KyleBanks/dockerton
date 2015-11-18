@@ -47,6 +47,7 @@ function Dockerton() {
      * When successfully resolved, the contents of the Dockerfile will be returned as a String.
      *
      * @param [options] {Object}
+     * @param [options.outputFile] {Object} Path to the desired output file. Defaults to './Dockerfile'
      *
      * @returns {bluebird}
      */
@@ -59,7 +60,7 @@ function Dockerton() {
             self._dockerfile = self._commands.join("\n");
 
             // Write the file
-            fs.writeFile('Dockerfile', self._dockerfile, 'utf8', function(err) {
+            fs.writeFile(options.outputFile || './Dockerfile', self._dockerfile, 'utf8', function(err) {
                 if (err) {
                     reject(err);
                 } else {

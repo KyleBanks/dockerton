@@ -63,7 +63,8 @@ docker.dockerfile(options)
 
 Generates the Dockerfile contents from the commands that have been issued.
 
-- **options** *(Optional)*: Currently not used.
+- **options** *(Optional)*:
+    - **options.outputFile**: Path to the generated Dockerfile, defaults to `./Dockerfile`.
 
 ### buildImage
 
