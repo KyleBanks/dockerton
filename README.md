@@ -1,28 +1,28 @@
 # Dockerton
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [Commands](#commands)
-    - [dockerfile](#dockerfile)
-    - [buildImage](#buildimage)
-    - [runContainer](#runcontainer)
-    - [Docker Commands](#docker-commands)
-        - [FROM](#from)
-        - [MAINTAINER](#maintainer)
-        - [RUN](#run)
-        - [CMD](#cmd)
-        - [LABEL](#label)
-        - [EXPOSE](#expose)
-        - [ENV](#env)
-        - [ADD](#add)
-        - [COPY](#copy)
-        - [ENTRYPOINT](#entrypoint)
-        - [VOLUME](#volume)
-        - [USER](#user)
-        - [ARG](#arg)
-        - [ONBUILD](#onbuild)
-        - [STOPSIGNAL](#stopsignal)
-- [License](#license)
+<!--- [Installation](#installation)-->
+<!--- [Usage](#usage)-->
+<!--- [Commands](#commands)-->
+<!--    - [dockerfile](#dockerfile)-->
+<!--    - [buildImage](#buildimage)-->
+<!--    - [runContainer](#runcontainer)-->
+<!--    - [Docker Commands](#docker-commands)-->
+<!--        - [FROM](#from)-->
+<!--        - [MAINTAINER](#maintainer)-->
+<!--        - [RUN](#run)-->
+<!--        - [CMD](#cmd)-->
+<!--        - [LABEL](#label)-->
+<!--        - [EXPOSE](#expose)-->
+<!--        - [ENV](#env)-->
+<!--        - [ADD](#add)-->
+<!--        - [COPY](#copy)-->
+<!--        - [ENTRYPOINT](#entrypoint)-->
+<!--        - [VOLUME](#volume)-->
+<!--        - [USER](#user)-->
+<!--        - [ARG](#arg)-->
+<!--        - [ONBUILD](#onbuild)-->
+<!--        - [STOPSIGNAL](#stopsignal)-->
+<!--- [License](#license)-->
 
 ## Installation
 
