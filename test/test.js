@@ -867,4 +867,104 @@ describe('Dockerton', function() {
             .then(done)
             .catch(done);
     });
+
+    it('buildImage: by default, directs output to `console.trace`', function(done) {
+        this.timeout(60000);
+
+        var consoleTraceCalled = false;
+        var consoleTrace = console.trace;
+        console.trace = function(data) {
+            expect(data).to.be.a('string');
+            consoleTraceCalled = true;
+        };
+
+        var d = _new()
+            .from('docker/whalesay');
+
+        d.dockerfile()
+            .then(function() {
+                return d.buildImage();
+            })
+            .then(function() {
+                console.trace = consoleTrace;
+
+                expect(consoleTraceCalled).to.equal(true);
+                done();
+            })
+            .catch(done);
+    });
+
+    it('buildImage: allows custom stdout listeners', function(done) {
+        this.timeout(60000);
+
+        var d = _new()
+            .from('docker/whalesay');
+
+        var stdoutCalled = false;
+        d.dockerfile()
+            .then(function() {
+                return d.buildImage({
+                    stdout: function(data) {
+                        expect(data).to.be.a('string');
+                        stdoutCalled = true;
+                    }
+                });
+            })
+            .then(function() {
+                expect(stdoutCalled).to.equal(true);
+
+                done();
+            })
+            .catch(done);
+    });
+
+    it('buildImage: by default, directs error output to `console.error`', function(done) {
+        this.timeout(60000);
+
+        var consoleErrorCalled = false;
+        var consoleError = console.error;
+        console.error = function(data) {
+            expect(data).to.be.a('string');
+            consoleErrorCalled = true;
+        };
+
+        var d = _new()
+            .from('not-a-real-image');
+
+        d.dockerfile()
+            .then(function() {
+                return d.buildImage();
+            })
+            .then(function() {
+                console.error = consoleError;
+
+                expect(consoleErrorCalled).to.equal(true);
+                done();
+            })
+            .catch(done);
+    });
+
+    it('buildImage: allows custom stderr listeners', function(done) {
+        this.timeout(60000);
+
+        var d = _new()
+            .from('not-a-real-image');
+
+        var stderrCalled = false;
+        d.dockerfile()
+            .then(function() {
+                return d.buildImage({
+                    stderr: function(data) {
+                        expect(data).to.be.a('string');
+                        stderrCalled = true;
+                    }
+                });
+            })
+            .then(function() {
+                expect(stderrCalled).to.equal(true);
+
+                done();
+            })
+            .catch(done);
+    });
 });

@@ -74,6 +74,8 @@ function Dockerton() {
      * Builds the Docker image using the generated Dockerfile.
      *
      * @param [options] {Object}
+     * @param [options.stdout] {function(String)} Executed each time stdout is generated from the subprocess. Defaults to `console.trace`.
+     * @param [options.stderr] {function(String)} Executed each time stderr is generated from the subprocess. Defaults to `console.error`.
      *
      * @returns {bluebird}
      */
@@ -88,8 +90,11 @@ function Dockerton() {
             options = options || {};
 
             var child = child_process.exec('docker build -t kbtest2 .');
-            child.stdout.on('data', console.log);
-            child.stderr.on('data', console.error);
+
+            // Listen for child process output
+            child.stdout.on('data', options.stdout || console.trace);
+            child.stderr.on('data', options.stderr || console.error);
+
             child.on('close', function(code) {
                 if (code !== 0) {
                     return reject(new Error("buildImage exited with bad code: " + code));
