@@ -64,12 +64,12 @@ docker.dockerfile(options)
 Generates the Dockerfile contents from the commands that have been issued.
 
 - **options** *(Optional)*:
-    - **options.outputFile** *{String}*: Path to the generated Dockerfile. Defaults to `./Dockerfile`.
+    - **options.path** *{String}*: Path to the generated Dockerfile. Defaults to `./Dockerfile`.
 
 ### buildImage
 
 - **options** *(Optional)*: 
-    - **options.stdout** *{function(String)}*: Executed each time stdout is generated from the subprocess. Defaults to `console.trace`.
+    - **options.stdout** *{function(String)}*: Executed each time stdout is generated from the subprocess. Defaults to `console.log`.
     - **options.stderr** *{function(String)}*: Executed each time stderr is generated from the subprocess. Defaults to `console.error`.
 
 ### runContainer

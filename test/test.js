@@ -16,9 +16,13 @@ var chai = require('chai'),
 chai.should();
 var expect = chai.expect;
 
+var child_process = require('child_process');
+
 /**
  * @private
  */
+// Enable debugging of Dockerton
+process.env.DEBUG_DOCKERTON = true;
 
 /**
  * Will be populated by the first test case.
@@ -824,14 +828,15 @@ describe('Dockerton', function() {
         var d = _new()
             .from("test");
 
+        var path = './test/tmp/Dockerfile-path-test_' + new Date().getTime();
         d.dockerfile({
-            outputFile: '/tmp/DockerfilePathTest' + new Date().getTime()
+            path: path
         }).then(function(contents) {
             var expected = "FROM test";
 
             expect(contents).to.equal(expected);
             expect(d._dockerfile).to.equal(expected);
-            expect(fs.readFileSync('/tmp/DockerfilePathTest', 'utf8')).to.equal(expected);
+            expect(fs.readFileSync(path, 'utf8')).to.equal(expected);
 
             done();
         }).catch(done);
@@ -846,7 +851,7 @@ describe('Dockerton', function() {
 
         d.buildImage()
             .then(function() {
-                done(new Error("`buildImage` should have failed!"));
+                done(new Error(".then() should not have been called!"));
             })
             .catch(function(err) {
                 expect(err).to.not.equal(null);
@@ -868,14 +873,14 @@ describe('Dockerton', function() {
             .catch(done);
     });
 
-    it('buildImage: by default, directs output to `console.trace`', function(done) {
+    it('buildImage: by default, directs output to `console.log`', function(done) {
         this.timeout(60000);
 
-        var consoleTraceCalled = false;
-        var consoleTrace = console.trace;
-        console.trace = function(data) {
+        var consoleLogCalled = false;
+        var consoleLog = console.log;
+        console.log = function(data) {
             expect(data).to.be.a('string');
-            consoleTraceCalled = true;
+            consoleLogCalled = true;
         };
 
         var d = _new()
@@ -886,9 +891,9 @@ describe('Dockerton', function() {
                 return d.buildImage();
             })
             .then(function() {
-                console.trace = consoleTrace;
+                console.log = consoleLog;
 
-                expect(consoleTraceCalled).to.equal(true);
+                expect(consoleLogCalled).to.equal(true);
                 done();
             })
             .catch(done);
@@ -936,12 +941,14 @@ describe('Dockerton', function() {
                 return d.buildImage();
             })
             .then(function() {
-                console.error = consoleError;
-
-                expect(consoleErrorCalled).to.equal(true);
-                done();
+                done(new Error(".then() should not have been called!"));
             })
-            .catch(done);
+            .catch(function() {
+                console.error = consoleError;
+                expect(consoleErrorCalled).to.equal(true);
+
+                done();
+            });
     });
 
     it('buildImage: allows custom stderr listeners', function(done) {
@@ -961,10 +968,73 @@ describe('Dockerton', function() {
                 });
             })
             .then(function() {
+                done(new Error(".then() should not have been called!"));
+            })
+            .catch(function() {
                 expect(stderrCalled).to.equal(true);
 
                 done();
+            });
+    });
+
+    it('buildImage: supports a custom `dir`', function(done) {
+        this.timeout(60000);
+
+        var dir = './test/tmp/',
+            path = dir + 'Dockerfile',
+            timestamp = new Date().getTime(),
+            uniqueCmd = 'echo ' + timestamp,
+            foundDockerfile = false;
+
+        var d = _new()
+            .from('scratch')
+            .cmd(uniqueCmd);
+
+        d.dockerfile({
+            path: path
+        }).then(function() {
+            return d.buildImage({
+                dir: dir,
+                stdout: function(data) {
+                    // Ensure it finds the correct Dockerfile,
+                    // this is an indication that the correct directory was used
+                    if (data.indexOf(uniqueCmd) >= 0) {
+                        foundDockerfile = true;
+                    }
+                }
+            });
+        }).then(function() {
+            foundDockerfile.should.equal(true);
+            done();
+        }).catch(done);
+    });
+
+    it('buildImage: supports the `tag` argument', function(done) {
+        this.timeout(60000);
+
+        var tag = 'test-tag' + new Date().getTime();
+
+        var d = _new()
+            .from('scratch')
+            .cmd('echo "hello world"');
+
+        d.dockerfile()
+            .then(function() {
+                return d.buildImage({
+                    args: {
+                        tag: tag
+                    }
+                });
             })
-            .catch(done);
+            .then(function() {
+                // Search for the docker image with the specified tag
+                var child = child_process.exec('docker images | grep ' + tag);
+                child.stdout.on('data', function(data) {
+                    expect(data).to.be.a('string');
+                    data.indexOf(tag).should.be.at.least(0);
+
+                    done();
+                });
+            }).catch(done);
     });
 });

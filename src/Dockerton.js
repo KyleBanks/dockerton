@@ -19,6 +19,16 @@ var Promise = require('bluebird');
 var command_utils = require('./command-utils');
 
 /**
+ * @private
+ */
+
+function _debug() {
+    if (process.env.DEBUG_DOCKERTON) {
+        console.log.apply(console, arguments);
+    }
+}
+
+/**
  * Dockerton Constructor
  *
  * @constructor
@@ -47,7 +57,7 @@ function Dockerton() {
      * When successfully resolved, the contents of the Dockerfile will be returned as a String.
      *
      * @param [options] {Object}
-     * @param [options.outputFile] {Object} Path to the desired output file. Defaults to './Dockerfile'
+     * @param [options.path] {Object} Path to the desired output file. Defaults to './Dockerfile'
      *
      * @returns {bluebird}
      */
@@ -60,7 +70,9 @@ function Dockerton() {
             self._dockerfile = self._commands.join("\n");
 
             // Write the file
-            fs.writeFile(options.outputFile || './Dockerfile', self._dockerfile, 'utf8', function(err) {
+            var path = options.path || './Dockerfile';
+            _debug('dockerfile: writing file: %s', path);
+            fs.writeFile(path, self._dockerfile, 'utf8', function(err) {
                 if (err) {
                     reject(err);
                 } else {
@@ -74,7 +86,10 @@ function Dockerton() {
      * Builds the Docker image using the generated Dockerfile.
      *
      * @param [options] {Object}
-     * @param [options.stdout] {function(String)} Executed each time stdout is generated from the subprocess. Defaults to `console.trace`.
+     * @param [options.dir] {String} Path to the directory to be used for building the docker image. Defaults to `.`.
+     * @param [options.args] {Object}
+     * @param [options.args.tag] {String} The tag (-t) of the image to be built. No default.
+     * @param [options.stdout] {function(String)} Executed each time stdout is generated from the subprocess. Defaults to `console.log`.
      * @param [options.stderr] {function(String)} Executed each time stderr is generated from the subprocess. Defaults to `console.error`.
      *
      * @returns {bluebird}
@@ -89,10 +104,23 @@ function Dockerton() {
             // Default options to an empty object
             options = options || {};
 
-            var child = child_process.exec('docker build -t kbtest2 .');
+            // Construct the arguments to be supplied to the `docker build` command
+            var args = [];
+            if (options.args) {
+                if (options.args.tag) {
+                    args.push('-t');
+                    args.push(options.args.tag);
+                }
+            }
+
+            var dir = options.dir || '.';
+
+            var command = util.format('docker build %s %s', args.join(" "), dir);
+            _debug('buildImage: executing: %s', command);
+            var child = child_process.exec(command);
 
             // Listen for child process output
-            child.stdout.on('data', options.stdout || console.trace);
+            child.stdout.on('data', options.stdout || console.log);
             child.stderr.on('data', options.stderr || console.error);
 
             child.on('close', function(code) {
