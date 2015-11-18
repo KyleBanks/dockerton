@@ -1,65 +1,35 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
-
-- [Dockerton](#dockerton)
-  - [Usage](#usage)
-  - [dockerfile](#dockerfile)
-  - [buildImage](#buildimage)
-  - [runContainer](#runcontainer)
-  - [Commands](#commands)
-    - [FROM](#from)
-        - [Usage](#usage-1)
-        - [Examples](#examples)
-    - [MAINTAINER](#maintainer)
-        - [Usage](#usage-2)
-        - [Examples](#examples-1)
-    - [RUN](#run)
-        - [Usage](#usage-3)
-        - [Examples](#examples-2)
-    - [CMD](#cmd)
-        - [Usage](#usage-4)
-        - [Examples](#examples-3)
-    - [LABEL](#label)
-        - [Usage](#usage-5)
-        - [Examples](#examples-4)
-    - [EXPOSE](#expose)
-        - [Usage](#usage-6)
-        - [Examples](#examples-5)
-    - [ENV](#env)
-        - [Usage](#usage-7)
-        - [Examples](#examples-6)
-    - [ADD](#add)
-        - [Usage](#usage-8)
-        - [Examples](#examples-7)
-    - [COPY](#copy)
-        - [Usage](#usage-9)
-        - [Examples](#examples-8)
-    - [ENTRYPOINT](#entrypoint)
-        - [Usage](#usage-10)
-        - [Examples](#examples-9)
-    - [VOLUME](#volume)
-        - [Usage](#usage-11)
-        - [Examples](#examples-10)
-    - [USER](#user)
-        - [Usage](#usage-12)
-        - [Examples](#examples-11)
-    - [ARG](#arg)
-        - [Usage](#usage-13)
-        - [Examples](#examples-12)
-    - [ONBUILD](#onbuild)
-        - [Usage](#usage-14)
-        - [Examples](#examples-13)
-    - [STOPSIGNAL](#stopsignal)
-        - [Usage](#usage-15)
-        - [Examples](#examples-14)
-  - [License](#license)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # Dockerton
 
+- [Installation](#installation)
+- [Usage](#usage)
+- [dockerfile](#dockerfile)
+- [buildImage](#buildimage)
+- [runContainer](#runcontainer)
+- [Commands](#commands)
+    - [FROM](#from)
+    - [MAINTAINER](#maintainer)
+    - [RUN](#run)
+    - [CMD](#cmd)
+    - [LABEL](#label)
+    - [EXPOSE](#expose)
+    - [ENV](#env)
+    - [ADD](#add)
+    - [COPY](#copy)
+    - [ENTRYPOINT](#entrypoint)
+    - [VOLUME](#volume)
+    - [USER](#user)
+    - [ARG](#arg)
+    - [ONBUILD](#onbuild)
+    - [STOPSIGNAL](#stopsignal)
+- [License](#license)
 
+## Installation
+
+Dockerton is available via [npm](https://www.npmjs.com/package/dockerton):
+
+```
+npm install dockerton
+```
 
 ## Usage
 
