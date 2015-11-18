@@ -86,9 +86,12 @@ function Dockerton() {
      * Builds the Docker image using the generated Dockerfile.
      *
      * @param [options] {Object}
+     *
      * @param [options.dir] {String} Path to the directory to be used for building the docker image. Defaults to `.`.
+     *
      * @param [options.args] {Object}
      * @param [options.args.tag] {String} The tag (-t) of the image to be built. No default.
+     *
      * @param [options.stdout] {function(String)} Executed each time stdout is generated from the subprocess. Defaults to `console.log`.
      * @param [options.stderr] {function(String)} Executed each time stderr is generated from the subprocess. Defaults to `console.error`.
      *

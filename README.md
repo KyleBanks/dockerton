@@ -64,13 +64,18 @@ docker.dockerfile(options)
 Generates the Dockerfile contents from the commands that have been issued.
 
 - **options** *(Optional)*:
-    - **options.path** *{String}*: Path to the generated Dockerfile. Defaults to `./Dockerfile`.
+    - **options.path** `{String}`: Path to the generated Dockerfile. Defaults to `./Dockerfile`.
 
 ### buildImage
 
 - **options** *(Optional)*: 
-    - **options.stdout** *{function(String)}*: Executed each time stdout is generated from the subprocess. Defaults to `console.log`.
-    - **options.stderr** *{function(String)}*: Executed each time stderr is generated from the subprocess. Defaults to `console.error`.
+    - **options.dir** `{String}`: Path to the directory to be used for building the docker image. Defaults to `.`.
+    
+    - **options.args** `{Object}`
+        - **options.args.tag** `{String}` The tag (`-t`) of the image to be built. No default.
+    
+    - **options.stdout** `{function(String)}`: Executed each time stdout is generated from the subprocess. Defaults to `console.log`.
+    - **options.stderr** `{function(String)}`: Executed each time stderr is generated from the subprocess. Defaults to `console.error`.
 
 ### runContainer
 
@@ -90,8 +95,8 @@ See [FROM documentation](http://docs.docker.com/engine/reference/builder/#from) 
 dockerton.from(image, tag);
 ```
 
-- **image**: The base image to build off of
-- **tag** *(Optional)*: The version of the image to use
+- **image** `{String}`: The base image to build off of
+- **tag**  `{String}` *(Optional)*: The version of the image to use
  
 ##### Examples
 ```node
@@ -113,7 +118,7 @@ See [MAINTAINER documentation](http://docs.docker.com/engine/reference/builder/#
 dockerton.maintainer(author);
 ```
 
-- **author**: The name of the author to display
+- **author** `{String}`: The name of the author to display
  
 ##### Examples
 ```node
@@ -132,7 +137,7 @@ See [RUN documentation](http://docs.docker.com/engine/reference/builder/#run) fo
 dockerton.run(commands);
 ```
 
-- **commands**: Either a `String` or `Array` of commands to be RUN.
+- **commands** `{String || Array}`: Either a `String` or `Array` of commands to be RUN.
    - If the `commands` argument provided is a String, it will be used in `RUN <command>` format.
    - If the `commands` argument provided is an Array, it will be using in `RUN ["command1", "command2", ...]` format.
    
@@ -154,7 +159,7 @@ See [CMD documentation](http://docs.docker.com/engine/reference/builder/#cmd) fo
 dockerton.cmd(commands);
 ```
 
-- **commands**: Either a `String` or `Array` of commands to be used with CMD.
+- **commands** `{String || Array}`: Either a `String` or `Array` of commands to be used with CMD.
     - If the `commands` argument provided is a String, it will be used in `CMD <command>` format.
     - If the `commands` argument provided is an Array, it will be using in `CMD ["command1", "command2", ...]` format.
     
@@ -179,9 +184,9 @@ dockerton.label(key, value)
 
 `label` supports two usages, either by providing a key and value or a map containing key-value pairs.
 
-- **key**: A single key String.
-- **value**: *(Optional)*: A single value String, required only if the first argument is a String.
-- **map**: An object containing any number of key-value pairs. All keys and values are treated as strings and added to the LABEL.
+- **key** `{String}`: A single key String.
+- **value**: *(Optional)* `{String}`: A single value String, required only if the first argument is a String.
+- **map** `{Object}`: An object containing any number of key-value pairs. All keys and values are treated as strings and added to the LABEL.
 
 ##### Examples
 ```node
@@ -202,7 +207,7 @@ See [EXPOSE documentation](http://docs.docker.com/engine/reference/builder/#expo
 dockerton.expose(ports);
 ```
 
-- **ports**: Either Number or Array of Numbers to be exposed.
+- **ports** `{Number || Array}`: Either Number or Array of Numbers to be exposed.
     - If the `ports` argument provided is a Number, a single port will be exposed like so: `EXPOSE port`.
     - If the `ports` argument provided is an Array, multiple ports will be exposed like so: `EXPOSE port1 port2 ... portN`.
     
@@ -227,9 +232,9 @@ dockerton.env(key, value)
 
 `env` supports two usages, either by providing a key and value or a map containing key-value pairs.
 
-- **key**: A single key String.
-- **value** *(Optional)*: A single value String, required only if the first argument is a String.
-- **map**: An object containing any number of key-value pairs. All keys and values are treated as strings and added to the ENV.
+- **key** `{String}`: A single key String.
+- **value** *(Optional)* `{String}`: A single value String, required only if the first argument is a String.
+- **map** `{Object}`: An object containing any number of key-value pairs. All keys and values are treated as strings and added to the ENV.
 
 ##### Examples
 ```node
@@ -250,10 +255,10 @@ See [ADD documentation](http://docs.docker.com/engine/reference/builder/#add) fo
 dockerton.add(sources, destination);
 ```
 
-- **sources**: Either a `String` or `Array` of source files/directories to be added.
+- **sources** `{String || Array}`: Either a `String` or `Array` of source files/directories to be added.
    - If the `sources` argument provided is a String, it will be used in `ADD src dest` format.
    - If the `sources` argument provided is an Array, it will be used in `ADD ["src1", "src2", ... "dest"]` format.
-- **destination**: The destination to which the sources will be added.
+- **destination** `{String}`: The destination to which the sources will be added.
    
 ##### Examples
 ```node
@@ -273,10 +278,10 @@ See [COPY](http://docs.docker.com/engine/reference/builder/#copy) for more detai
 dockerton.copy(sources, destination);
 ```
 
-- **sources**: Either a `String` or `Array` of source files/directories to be copied.
+- **sources** `{String || Array}`: Either a `String` or `Array` of source files/directories to be copied.
    - If the `sources` argument provided is a String, it will be used in `COPY src dest` format.
    - If the `sources` argument provided is an Array, it will be used in `COPY ["src1", "src2", ... "dest"]` format.
-- **destination**: The destination to which the sources will be copied.
+- **destination** `{String}`: The destination to which the sources will be copied.
    
 ##### Examples
 ```node
@@ -296,7 +301,7 @@ See [ENTRYPOINT documentation](http://docs.docker.com/engine/reference/builder/#
 dockerton.entrypoint(commands);
 ```
 
-- **commands**: Either a `String` or `Array` of commands to be used as the ENTRYPOINT.
+- **commands** `{String || Array}`: Either a `String` or `Array` of commands to be used as the ENTRYPOINT.
    - If the `commands` argument provided is a String, it will be used in `ENTRYPOINT <command>` format.
    - If the `commands` argument provided is an Array, it will be using in `ENTRYPOINT ["command1", "command2", ...]` format.
    
@@ -318,7 +323,7 @@ See [VOLUME documentation](http://docs.docker.com/engine/reference/builder/#volu
 dockerton.volume(volumes);
 ```
 
-- **volumes**: Either a `String` or `Array` of commands to be used as the VOLUME.
+- **volumes** `{String || Array}`: Either a `String` or `Array` of commands to be used as the VOLUME.
    - If the `volumes` argument provided is a String, it will be used in `VOLUME <volume>` format.
    - If the `volumes` argument provided is an Array, it will be using in `VOLUME ["/vol1", "/vol2", ...]` format.
    
@@ -341,7 +346,7 @@ See [USER documentation](http://docs.docker.com/engine/reference/builder/#user) 
 dockerton.user(user);
 ```
 
-- **user**: The name or UID of the user to use.
+- **user** `{String}`: The name or UID of the user to use.
  
 ##### Examples
 ```node
@@ -361,8 +366,8 @@ See [ARG documentation](http://docs.docker.com/engine/reference/builder/#arg) fo
 dockerton.arg(arg, default);
 ```
 
-- **arg**: The name of the ARG.
-- **default** *(Optional)*: The default value of the ARG.
+- **arg** `{String}`: The name of the ARG.
+- **default** *(Optional)* `{String}`: The default value of the ARG.
  
 ##### Examples
 ```node
@@ -383,7 +388,7 @@ See [ONBUILD documentation](http://docs.docker.com/engine/reference/builder/#onb
 dockerton.onbuild(command);
 ```
 
-- **command**: The command to run with ONBUILD.
+- **command** `{String}`: The command to run with ONBUILD.
  
 ##### Examples
 ```node
@@ -403,7 +408,7 @@ See [STOPSIGNAL documentation](http://docs.docker.com/engine/reference/builder/#
 dockerton.stopsignal(signal);
 ```
 
-- **signal**: The signal to stop.
+- **signal** `{String || Number}`: The signal to stop.
  
 ##### Examples
 ```node
