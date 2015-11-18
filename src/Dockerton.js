@@ -10,7 +10,11 @@
 /**
  * @imports
  */
-var util = require('util');
+var util = require('util'),
+    child_process = require('child_process'),
+    fs = require('fs');
+
+var Promise = require('bluebird');
 
 var command_utils = require('./command-utils');
 
@@ -38,20 +42,61 @@ function Dockerton() {
     self._dockerfile = null;
 
     /**
-     * Generates the Dockerfile contents from the commands that have been issued.
+     * Generates the Dockerfile contents from the commands that have been issued, and returns a promise.
+     *
+     * When successfully resolved, the contents of the Dockerfile will be returned as a String.
      *
      * @param [options] {Object}
      *
-     * @returns {Dockerton}
+     * @returns {bluebird}
      */
     self.dockerfile = function(options) {
-        // Default options to an empty object
-        options = options || {};
+        return new Promise(function(resolve, reject) {
+            // Default options to an empty object
+            options = options || {};
 
-        // Generate the contents
-        self._dockerfile = self._commands.join("\n");
+            // Generate the contents
+            self._dockerfile = self._commands.join("\n");
 
-        return self;
+            // Write the file
+            fs.writeFile('Dockerfile', self._dockerfile, 'utf8', function(err) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(self._dockerfile);
+                }
+            });
+        });
+    };
+
+    /**
+     * Builds the Docker image using the generated Dockerfile.
+     *
+     * @param [options] {Object}
+     *
+     * @returns {bluebird}
+     */
+    self.buildImage = function(options) {
+        return new Promise(function(resolve, reject) {
+            // Ensure `.dockerfile` has run
+            if (! self._dockerfile) {
+                return self._promise.catch(new Error("Dockerfile not found. Did you forget to call .dockerfile()?"));
+            }
+
+            // Default options to an empty object
+            options = options || {};
+
+            var child = child_process.exec('docker build -t kbtest2 .');
+            child.stdout.on('data', console.log);
+            child.stderr.on('data', console.error);
+            child.on('close', function(code) {
+                if (code !== 0) {
+                    return reject(new Error("buildImage exited with bad code: " + code));
+                }
+
+                resolve();
+            });
+        });
     };
 
     /**

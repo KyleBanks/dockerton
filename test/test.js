@@ -10,7 +10,9 @@
 /**
  * @imports
  */
-var chai = require('chai');
+var chai = require('chai'),
+    fs = require('fs');
+
 chai.should();
 var expect = chai.expect;
 
@@ -767,32 +769,85 @@ describe('Dockerton', function() {
      * dockerfile
      */
     it('dockerfile: constructs an empty Dockerfile', function(done) {
-        var d = _new()
-            .dockerfile();
+        var d = _new();
 
-        expect(d._dockerfile).to.be.a('string');
-        expect(d._dockerfile.length).to.equal(0);
+         d.dockerfile()
+            .then(function(contents) {
+                expect(contents).to.be.a('string');
+                expect(contents.length).to.equal(0);
+                expect(d._dockerfile).to.be.a('string');
+                expect(d._dockerfile.length).to.equal(0);
+                expect(fs.readFileSync('Dockerfile', 'utf8').length).to.equal(0);
 
-        done();
+                done();
+            })
+            .catch(done);
     });
 
     it('dockerfile: constructs a Dockerfile with a single command', function(done) {
         var d = _new()
-            .from("test")
-            .dockerfile();
+            .from("test");
 
-        expect(d._dockerfile).to.equal("FROM test");
-        done();
+        d.dockerfile()
+            .then(function(contents) {
+                var expected = "FROM test";
+
+                expect(contents).to.equal(expected);
+                expect(d._dockerfile).to.equal(expected);
+                expect(fs.readFileSync('Dockerfile', 'utf8')).to.equal(expected);
+
+                done();
+            })
+            .catch(done);
     });
 
     it('dockerfile: constructs a Dockerfile with multiple commands', function(done) {
         var d = _new()
             .from("test")
             .maintainer("kyle")
-            .cmd('echo TEST')
-            .dockerfile();
+            .cmd('echo TEST');
 
-        expect(d._dockerfile).to.equal('FROM test\nMAINTAINER kyle\nCMD echo TEST');
-        done();
+        d.dockerfile()
+            .then(function(contents) {
+                var expected = 'FROM test\nMAINTAINER kyle\nCMD echo TEST';
+
+                expect(contents).to.equal(expected);
+                expect(d._dockerfile).to.equal(expected);
+                expect(fs.readFileSync('Dockerfile', 'utf8')).to.equal(expected);
+
+                done();
+            })
+            .catch(done);
+    });
+
+    /**
+     * buildImage
+     */
+    it('buildImage: throws an error if no dockerfile is generated', function(done) {
+        var d = _new()
+            .from('docker/whalesay');
+
+        d.buildImage()
+            .then(function() {
+                done(new Error("`buildImage` should have failed!"));
+            })
+            .catch(function(err) {
+                expect(err).to.not.equal(null);
+                done();
+            });
+    });
+
+    it('buildImage: builds a basic image', function(done) {
+        this.timeout(60000);
+
+        var d = _new()
+            .from('docker/whalesay');
+
+        d.dockerfile()
+            .then(function() {
+                return d.buildImage();
+            })
+            .then(done)
+            .catch(done);
     });
 });

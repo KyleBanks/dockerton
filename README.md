@@ -49,8 +49,12 @@ After issuing your commands, you can then generate a Dockerfile, build the docke
 
 ```node
 docker.dockerfile(options)
-    .buildImage(options)
-    .runContainer(options)
+    .then(function(contents) {
+        return docker.buildImage(options);
+    })
+    .then(function() {
+        return docker.runContainer(options);
+    });
 ```
 
 ## Commands
@@ -59,15 +63,15 @@ docker.dockerfile(options)
 
 Generates the Dockerfile contents from the commands that have been issued.
 
-- **options**: Currently not used.
+- **options** *(Optional)*: Currently not used.
 
 ### buildImage
 
-- **options**: Currently not used.
+- **options** *(Optional)*: Currently not used.
 
 ### runContainer
 
-- **options**: Currently not used.
+- **options** *(Optional)*: Currently not used.
 
 ### Docker Commands
 
