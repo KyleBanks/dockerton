@@ -35,26 +35,21 @@ function Dockerton() {
      *
      * @type {String}
      */
-    self._generated = null;
+    self._dockerfile = null;
 
     /**
      * Generates the Dockerfile contents from the commands that have been issued.
      *
      * @param [options] {Object}
-     * @param [options.destination] {String} If set, will write the Dockerfile to the specified location.
      *
      * @returns {Dockerton}
      */
-    self.generate = function(options) {
+    self.dockerfile = function(options) {
         // Default options to an empty object
         options = options || {};
 
         // Generate the contents
-        self._generated = self._commands.join("\n");
-
-        if (options.destination) {
-            throw new Error("Unsupported property: destination");
-        }
+        self._dockerfile = self._commands.join("\n");
 
         return self;
     };

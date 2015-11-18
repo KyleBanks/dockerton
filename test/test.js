@@ -56,7 +56,7 @@ describe('Dockerton', function() {
         expect(d).to.be.a('object');
         d._commands.should.be.a('array');
         d._commands.length.should.equal(0);
-        expect(d._generated).to.equal(null);
+        expect(d._dockerfile).to.equal(null);
 
         done();
     });
@@ -764,35 +764,35 @@ describe('Dockerton', function() {
     });
 
     /**
-     * generate
+     * dockerfile
      */
-    it('generate: constructs an empty Dockerfile', function(done) {
+    it('dockerfile: constructs an empty Dockerfile', function(done) {
         var d = _new()
-            .generate();
+            .dockerfile();
 
-        expect(d._generated).to.be.a('string');
-        expect(d._generated.length).to.equal(0);
+        expect(d._dockerfile).to.be.a('string');
+        expect(d._dockerfile.length).to.equal(0);
 
         done();
     });
 
-    it('generate: constructs a Dockerfile with a single command', function(done) {
+    it('dockerfile: constructs a Dockerfile with a single command', function(done) {
         var d = _new()
             .from("test")
-            .generate();
+            .dockerfile();
 
-        expect(d._generated).to.equal("FROM test");
+        expect(d._dockerfile).to.equal("FROM test");
         done();
     });
 
-    it('generate: constructs a Dockerfile with multiple commands', function(done) {
+    it('dockerfile: constructs a Dockerfile with multiple commands', function(done) {
         var d = _new()
             .from("test")
             .maintainer("kyle")
             .cmd('echo TEST')
-            .generate();
+            .dockerfile();
 
-        expect(d._generated).to.equal('FROM test\nMAINTAINER kyle\nCMD echo TEST');
+        expect(d._dockerfile).to.equal('FROM test\nMAINTAINER kyle\nCMD echo TEST');
         done();
     });
 });

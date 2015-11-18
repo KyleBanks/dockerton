@@ -1,5 +1,40 @@
 # Dockerton
 
+## Usage
+
+Dockerton is used by constructing an instance of the `Dockerton` class, and issuing `Dockerfile` style commands.
+
+```node
+var Dockerton = require('dockerton');
+
+var docker = new Dockerton()
+    .from('scratch', 'latest')
+    .copy('hello', '/')
+    .cmd(['/hello']);
+```
+
+After issuing your commands, you can then generate a Dockerfile, build the docker image, and run the container.
+
+```node
+docker.dockerfile(options)
+    .buildImage(options)
+    .runContainer(options)
+```
+
+## dockerfile
+
+Generates the Dockerfile contents from the commands that have been issued.
+
+- **options**: Currently not used.
+
+## buildImage
+
+- **options**: Currently not used.
+
+## runContainer
+
+- **options**: Currently not used.
+
 ## Commands
 
 ### FROM
