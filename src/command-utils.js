@@ -12,6 +12,8 @@
  */
 var util = require('util');
 
+var debug = require('./debug');
+
 /**
  * @public
  */
@@ -87,14 +89,16 @@ module.exports = {
      * @returns {Array}
      */
     constructArgsFromMap: function(map) {
+        debug('constructArgsFromMap: parsing arg map: %s', JSON.stringify(map));
         var args = [];
 
         // Iterate each argument and append both the flag and the value to the `args` variable.
-        Object.keys(map.args).forEach(function(key) {
+        Object.keys(map).forEach(function(key) {
             args.push(key);
-            args.push(map.args[key]);
+            args.push(map[key]);
         });
 
+        debug('constructArgsFromMap: arguments: %s', JSON.stringify(args));
         return args;
     }
 

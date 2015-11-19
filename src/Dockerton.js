@@ -117,7 +117,7 @@ function Dockerton(tag) {
             args.push(self.tag);
 
             if (options.args) {
-                args.concat(
+                args = args.concat(
                     command_utils.constructArgsFromMap(options.args)
                 );
             }
@@ -162,7 +162,6 @@ function Dockerton(tag) {
      * @returns {bluebird}
      */
     self.runImage = function(options) {
-        // TODO: Test
         return new Promise(function(resolve, reject) {
             // Default options to an empty object
             options = options || {};
@@ -172,7 +171,7 @@ function Dockerton(tag) {
 
             // TODO: test custom args
             if (options.args) {
-                args.concat(
+                args = args.concat(
                     command_utils.constructArgsFromMap(options.args)
                 );
             }
@@ -183,7 +182,6 @@ function Dockerton(tag) {
             var child = child_process.exec(command);
 
             // Listen for child process output
-            // TODO: test stdout/stderr options
             child.stdout.on('data', options.stdout || console.log);
             child.stderr.on('data', options.stderr || console.error);
 
