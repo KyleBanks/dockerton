@@ -45,9 +45,28 @@ var docker = new Dockerton('dockerton-example')
     .cmd(['/hello']);
 ```
 
-After issuing your commands, you can then generate a Dockerfile, build the docker image, and run the container.
+After issuing your commands, you can then generate a Dockerfile, build a docker image, and/or run a container.
 
 ```node
+// Generate the Dockerfile
+docker.dockerfile(options) 
+    .then(function(contents) {
+        console.log(contents); // -> Raw contents of the Dockerfile
+    });
+    
+// Build an image
+docker.buildImage(options) 
+    .then(function(details) {
+        console.log(details.Id); // -> Unique ID of the newly built image
+    });
+
+// Run the container
+docker.runContainer(options)
+    .then(function() {
+        // Container process finished
+    });
+
+// Or chain them all together as needed
 docker.dockerfile(options)
     .then(function(contents) {
         return docker.buildImage(options);
