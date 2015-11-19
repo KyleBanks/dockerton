@@ -74,6 +74,28 @@ module.exports = {
      */
     constructSimpleCommand: function(cmd, value) {
         return util.format("%s %s", cmd, value);
+    },
+
+    /**
+     * Constructs command-line arguments from an object containing arg=value pairs, for example:
+     *
+     * {
+     *   '-t': "tag"
+     * }
+     *
+     * @param map {Object}
+     * @returns {Array}
+     */
+    constructArgsFromMap: function(map) {
+        var args = [];
+
+        // Iterate each argument and append both the flag and the value to the `args` variable.
+        Object.keys(map.args).forEach(function(key) {
+            args.push(key);
+            args.push(map.args[key]);
+        });
+
+        return args;
     }
 
 };

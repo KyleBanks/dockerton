@@ -39,9 +39,6 @@ dockerton.dockerfile()
 
         return dockerton.runImage();
     })
-    .then(function() {
-
-    })
     .catch(function(err) {
         throw err;
     });

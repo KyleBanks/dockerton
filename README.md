@@ -118,8 +118,12 @@ Resolves: `{Object}` Full image details, as seen via `docker inspect`.
 
 ### runContainer
 
-- **options** *(Optional)*: Currently not used.
-
+- **options** *(Optional)*: 
+    - **options.args** `{Object}`: A map of arguments to be provided to the `docker run` command. The map should be provided in the format of `{ 'flag': 'value' }`. For example `{ '-f': 'Filename' }` to specify a custom Dockerfile name.
+    
+    - **options.stdout** `{function(String)}`: Executed each time stdout is generated from the subprocess. Defaults to `console.log`.
+    - **options.stderr** `{function(String)}`: Executed each time stderr is generated from the subprocess. Defaults to `console.error`.
+    
 ### Docker Commands
 
 #### FROM

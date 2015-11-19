@@ -117,11 +117,9 @@ function Dockerton(tag) {
             args.push(self.tag);
 
             if (options.args) {
-                // Iterate each argument and append both the flag and the value to the `args` variable.
-                Object.keys(options.args).forEach(function(key) {
-                    args.push(key);
-                    args.push(options.args[key]);
-                });
+                args.concat(
+                    command_utils.constructArgsFromMap(options.args)
+                );
             }
 
             // Determine the directory to build the docker image from
@@ -153,13 +151,50 @@ function Dockerton(tag) {
     /**
      * Runs the Docker image.
      *
-     * @param options {Object}
+     * @param [options] {Object}
+     *
+     * @param [options.args] {Object} A map of arguments to be provided to the `docker run` command. The map should be provided in the format
+     * of `{ 'flag': 'value' }`. For example `{ '-f': 'Filename' }` to specify a custom Dockerfile name.
+     *
+     * @param [options.stdout] {function(String)} Executed each time stdout is generated from the subprocess. Defaults to `console.log`.
+     * @param [options.stderr] {function(String)} Executed each time stderr is generated from the subprocess. Defaults to `console.error`.
      *
      * @returns {bluebird}
      */
     self.runImage = function(options) {
+        // TODO: Test
         return new Promise(function(resolve, reject) {
+            // Default options to an empty object
+            options = options || {};
 
+            // Construct the arguments to be supplied to the `docker run` command
+            var args = [];
+
+            // TODO: test custom args
+            if (options.args) {
+                args.concat(
+                    command_utils.constructArgsFromMap(options.args)
+                );
+            }
+
+            // Construct and execute the command
+            var command = util.format('docker run %s %s', args.join(" "), self.tag);
+            debug('runImage: executing: %s', command);
+            var child = child_process.exec(command);
+
+            // Listen for child process output
+            // TODO: test stdout/stderr options
+            child.stdout.on('data', options.stdout || console.log);
+            child.stderr.on('data', options.stderr || console.error);
+
+            // Wait for the process to complete
+            child.on('close', function(code) {
+                if (code !== 0) {
+                    return reject(new Error("runImage exited with bad code: " + code));
+                }
+
+                resolve();
+            });
         });
     };
 
