@@ -1004,8 +1004,41 @@ describe('Dockerton', function() {
             return d.buildImage({
                 dir: dir,
                 stdout: function(data) {
-                    // Ensure it finds the correct Dockerfile,
-                    // this is an indication that the correct directory was used
+                    // Ensure it finds the unique command,
+                    // this is an indication that the correct directory/Dockerfile was used
+                    if (data.indexOf(uniqueCmd) >= 0) {
+                        foundDockerfile = true;
+                    }
+                }
+            });
+        }).then(function() {
+            foundDockerfile.should.equal(true);
+            done();
+        }).catch(done);
+    });
+
+    it('buildImage: supports custom `args` values', function(done) {
+        this.timeout(60000);
+
+        var dir = './test/tmp/',
+            filename = 'Dockerfile' + new Date().getTime(),
+            path = dir + filename,
+            uniqueCmd = 'echo ' + filename,
+            foundDockerfile = false;
+
+        var d = _new()
+            .from('scratch')
+            .cmd(uniqueCmd);
+
+        d.dockerfile({
+            path: path
+        }).then(function() {
+            return d.buildImage({
+                dir: dir,
+                args: {
+                    '-f': path
+                },
+                stdout: function(data) {
                     if (data.indexOf(uniqueCmd) >= 0) {
                         foundDockerfile = true;
                     }

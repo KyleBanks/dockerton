@@ -92,7 +92,7 @@ Resolves: `{Object}` Full image details, as seen via `docker inspect`.
 - **options** *(Optional)*: 
     - **options.dir** `{String}`: Path to the directory to be used for building the docker image. Defaults to `.`.
     
-    - **options.args** `{Object}`: A map of arguments to be provided to the `docker build` command. 
+    - **options.args** `{Object}`: A map of arguments to be provided to the `docker build` command. The map should be provided in the format of `{ 'flag': 'value' }`. For example `{ '-f': 'Filename' }` to specify a custom Dockerfile name.
     
     - **options.stdout** `{function(String)}`: Executed each time stdout is generated from the subprocess. Defaults to `console.log`.
     - **options.stderr** `{function(String)}`: Executed each time stderr is generated from the subprocess. Defaults to `console.error`.

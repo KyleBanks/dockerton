@@ -98,7 +98,8 @@ function Dockerton(tag) {
      *
      * @param [options.dir] {String} Path to the directory to be used for building the docker image. Defaults to `.`.
      *
-     * @param [options.args] {Object} A map of arguments to be provided to the `docker build` command.
+     * @param [options.args] {Object} A map of arguments to be provided to the `docker build` command. The map should be provided in the format
+     * of `{ 'flag': 'value' }`. For example `{ '-f': 'Filename' }` to specify a custom Dockerfile name.
      *
      * @param [options.stdout] {function(String)} Executed each time stdout is generated from the subprocess. Defaults to `console.log`.
      * @param [options.stderr] {function(String)} Executed each time stderr is generated from the subprocess. Defaults to `console.error`.
@@ -121,11 +122,17 @@ function Dockerton(tag) {
             args.push(self.tag);
 
             if (options.args) {
-                // TODO: Implement and test
+                // Iterate each argument and append both the flag and the value to the `args` variable.
+                Object.keys(options.args).forEach(function(key) {
+                    args.push(key);
+                    args.push(options.args[key]);
+                });
             }
 
+            // Determine the directory to build the docker image from
             var dir = options.dir || '.';
 
+            // Construct and execute the command
             var command = util.format('docker build %s %s', args.join(" "), dir);
             debug('buildImage: executing: %s', command);
             var child = child_process.exec(command);
