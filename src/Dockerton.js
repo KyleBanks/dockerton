@@ -16,54 +16,14 @@ var util = require('util'),
 
 var Promise = require('bluebird');
 
-var command_utils = require('./command-utils');
+var command_utils = require('./command-utils'),
+    docker_utils = require('./docker-utils');
+
+var debug = require('./debug');
 
 /**
  * @private
  */
-
-/**
- * Outputs to `console.log` if the `DEBUG_DOCKERTON` environment variable is set.
- */
-function _debug() {
-    if (process.env.DEBUG_DOCKERTON) {
-        console.log.apply(console, arguments);
-    }
-}
-
-/**
- * Executes a `docker inspect <image>` command and returns the results/
- *
- * Resolves: {Object} Objects containing the full image details.
- *
- * @param image {String}
- *
- * @returns {bluebird}
- */
-function _inspect(image) {
-    return new Promise(function(resolve, reject) {
-        var imageData = [];
-
-        var imageDataCommand = util.format("docker inspect %s", image);
-        _debug('_inspect: executing: %s', imageDataCommand);
-
-        var imageDataChild = child_process.exec(imageDataCommand);
-
-        imageDataChild.stdout.on('data', function(data) {
-            imageData.push(data);
-        });
-
-        imageDataChild.on('close', function(code) {
-            if (code !== 0) {
-                return reject(new Error("failed to inspect image, return code: " + code));
-            }
-
-            resolve(
-                JSON.parse(imageData.join(''))[0]
-            );
-        });
-    });
-}
 
 /**
  * Dockerton Constructor
@@ -118,7 +78,7 @@ function Dockerton(tag) {
 
             // Write the file
             var path = options.path || './Dockerfile';
-            _debug('dockerfile: writing file: %s', path);
+            debug('dockerfile: writing file: %s', path);
             fs.writeFile(path, self._dockerfile, 'utf8', function(err) {
                 if (err) {
                     reject(err);
@@ -167,7 +127,7 @@ function Dockerton(tag) {
             var dir = options.dir || '.';
 
             var command = util.format('docker build %s %s', args.join(" "), dir);
-            _debug('buildImage: executing: %s', command);
+            debug('buildImage: executing: %s', command);
             var child = child_process.exec(command);
 
             // Listen for child process output
@@ -181,7 +141,7 @@ function Dockerton(tag) {
                 }
 
                 // Success, load the full image details and return
-                _inspect(self.tag)
+                return docker_utils.inspect(self.tag)
                     .then(resolve)
                     .catch(reject);
             });
