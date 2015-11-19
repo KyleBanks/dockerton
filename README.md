@@ -52,7 +52,7 @@ docker.dockerfile(options)
     .then(function(contents) {
         return docker.buildImage(options);
     })
-    .then(function() {
+    .then(function(imageDetails) {
         return docker.runContainer(options);
     });
 ```
@@ -78,10 +78,16 @@ Instantiates a new Dockerton instance which can be used to generate a dockerfile
 
 Generates the Dockerfile contents from the commands that have been issued.
 
+Resolves: `{String}` Dockerfile contents.
+
 - **options** *(Optional)*:
     - **options.path** `{String}`: Path to the generated Dockerfile. Defaults to `./Dockerfile`.
 
 ### buildImage
+
+Builds the Docker image using the generated Dockerfile, and returns the full image data.
+ 
+Resolves: `{Object}` Full image details, as seen via `docker inspect`.
 
 - **options** *(Optional)*: 
     - **options.dir** `{String}`: Path to the directory to be used for building the docker image. Defaults to `.`.

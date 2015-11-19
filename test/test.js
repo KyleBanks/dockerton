@@ -871,7 +871,13 @@ describe('Dockerton', function() {
             .then(function() {
                 return d.buildImage();
             })
-            .then(done)
+            .then(function(details) {
+                expect(details).to.be.a('object');
+                expect(details.Id).to.be.a('string');
+                expect(details.Id.length).to.be.at.least(1);
+
+                done();
+            })
             .catch(done);
     });
 
@@ -1026,13 +1032,18 @@ describe('Dockerton', function() {
             })
             .then(function() {
                 // Search for the docker image with the specified tag
+                var found = false;
+
                 var child = child_process.exec('docker images | grep ' + tag);
                 child.stdout.on('data', function(data) {
-                    expect(data).to.be.a('string');
-                    data.indexOf(tag).should.be.at.least(0);
-
-                    done();
+                    if (data.indexOf(tag) >= 0) {
+                        found = true;
+                    }
                 });
+                child.on('close', function() {
+                    found.should.equal(true);
+                    done();
+                })
             }).catch(done);
     });
 });

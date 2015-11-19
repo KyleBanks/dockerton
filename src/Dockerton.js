@@ -22,10 +22,47 @@ var command_utils = require('./command-utils');
  * @private
  */
 
+/**
+ * Outputs to `console.log` if the `DEBUG_DOCKERTON` environment variable is set.
+ */
 function _debug() {
     if (process.env.DEBUG_DOCKERTON) {
         console.log.apply(console, arguments);
     }
+}
+
+/**
+ * Executes a `docker inspect <image>` command and returns the results/
+ *
+ * Resolves: {Object} Objects containing the full image details.
+ *
+ * @param image {String}
+ *
+ * @returns {bluebird}
+ */
+function _inspect(image) {
+    return new Promise(function(resolve, reject) {
+        var imageData = [];
+
+        var imageDataCommand = util.format("docker inspect %s", image);
+        _debug('_inspect: executing: %s', imageDataCommand);
+
+        var imageDataChild = child_process.exec(imageDataCommand);
+
+        imageDataChild.stdout.on('data', function(data) {
+            imageData.push(data);
+        });
+
+        imageDataChild.on('close', function(code) {
+            if (code !== 0) {
+                return reject(new Error("failed to inspect image, return code: " + code));
+            }
+
+            resolve(
+                JSON.parse(imageData.join(''))[0]
+            );
+        });
+    });
 }
 
 /**
@@ -64,7 +101,7 @@ function Dockerton(tag) {
     /**
      * Generates the Dockerfile contents from the commands that have been issued, and returns a promise.
      *
-     * When successfully resolved, the contents of the Dockerfile will be returned as a String.
+     * Resolves: {String} Dockerfile contents
      *
      * @param [options] {Object}
      * @param [options.path] {Object} Path to the desired output file. Defaults to './Dockerfile'
@@ -93,7 +130,9 @@ function Dockerton(tag) {
     };
 
     /**
-     * Builds the Docker image using the generated Dockerfile.
+     * Builds the Docker image using the generated Dockerfile, and returns the full image data.
+     *
+     * Resolves: {Object} Full image details, as seen via `docker inspect`.
      *
      * @param [options] {Object}
      *
@@ -122,7 +161,7 @@ function Dockerton(tag) {
             args.push(self.tag);
 
             if (options.args) {
-
+                // TODO: Implement and test
             }
 
             var dir = options.dir || '.';
@@ -135,19 +174,25 @@ function Dockerton(tag) {
             child.stdout.on('data', options.stdout || console.log);
             child.stderr.on('data', options.stderr || console.error);
 
+            // Wait for the process to complete
             child.on('close', function(code) {
                 if (code !== 0) {
                     return reject(new Error("buildImage exited with bad code: " + code));
                 }
 
-                resolve();
+                // Success, load the full image details and return
+                _inspect(self.tag)
+                    .then(resolve)
+                    .catch(reject);
             });
         });
     };
 
     /**
-     * Runs the Docker image
-     * @param options
+     * Runs the Docker image.
+     *
+     * @param options {Object}
+     *
      * @returns {bluebird}
      */
     self.runImage = function(options) {
