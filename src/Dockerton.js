@@ -108,11 +108,6 @@ function Dockerton(tag) {
      */
     self.buildImage = function(options) {
         return new Promise(function(resolve, reject) {
-            // Ensure `.dockerfile` has run
-            if (! self._dockerfile) {
-                return self._promise.catch(new Error("Dockerfile not found. Did you forget to call .dockerfile()?"));
-            }
-
             // Default options to an empty object
             options = options || {};
 

@@ -847,20 +847,6 @@ describe('Dockerton', function() {
     /**
      * buildImage
      */
-    it('buildImage: throws an error if no dockerfile is generated', function(done) {
-        var d = _new()
-            .from('docker/whalesay');
-
-        d.buildImage()
-            .then(function() {
-                done(new Error(".then() should not have been called!"));
-            })
-            .catch(function(err) {
-                expect(err).to.not.equal(null);
-                done();
-            });
-    });
-
     it('buildImage: builds a basic image', function(done) {
         this.timeout(60000);
 
@@ -1076,7 +1062,37 @@ describe('Dockerton', function() {
                 child.on('close', function() {
                     found.should.equal(true);
                     done();
-                })
+                });
             }).catch(done);
+    });
+
+    it('buildImage: uses an existing dockerfile if the tag matches', function(done) {
+        var tag = 'old-dockerfile-test-' + new Date().getTime(),
+            uniqueCommand = 'echo ' + tag;
+
+        var d1 = _new(tag)
+            .from('scratch')
+            .cmd(uniqueCommand);
+
+        d1.dockerfile()
+            .then(function() {
+                var foundDockerfile = false;
+
+                // Use the same tag, but don't generate a new dockerfile
+                var d = _new(tag);
+
+                d.buildImage({
+                    stdout: function(data) {
+                        if (data.indexOf(uniqueCommand) >= 0) {
+                            foundDockerfile = true;
+                        }
+                    }
+                }).then(function() {
+                    expect(foundDockerfile).to.equal(true);
+                    done();
+                }).catch(done);
+            })
+            .catch(done);
+
     });
 });
