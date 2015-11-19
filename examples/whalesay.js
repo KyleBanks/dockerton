@@ -31,12 +31,16 @@ dockerton.dockerfile()
 
         return dockerton.buildImage();
     })
-    .then(function() {
+    .then(function(imageDetails) {
         console.log('---------------------');
-        console.log('Image Built');
+        console.log('Image Built:');
+        console.log(imageDetails);
         console.log('---------------------');
 
-        // TODO
+        return dockerton.runImage();
+    })
+    .then(function() {
+        
     })
     .catch(function(err) {
         throw err;
