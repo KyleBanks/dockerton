@@ -39,7 +39,7 @@ Dockerton is used by constructing an instance of the `Dockerton` class, and issu
 ```node
 var Dockerton = require('dockerton');
 
-var docker = new Dockerton()
+var docker = new Dockerton('dockerton-example')
     .from('scratch', 'latest')
     .copy('hello', '/')
     .cmd(['/hello']);
@@ -68,6 +68,12 @@ node <example name>.js
 
 ## Commands
 
+### Constructor
+
+Instantiates a new Dockerton instance which can be used to generate a dockerfile, build an image, or run a container.
+ 
+- **tag** `{String}`: The tag/name of the docker image to be built/run. Equivalent to the `-t` argument of `docker build`. For example, `docker/whalesay`.
+
 ### dockerfile
 
 Generates the Dockerfile contents from the commands that have been issued.
@@ -80,8 +86,7 @@ Generates the Dockerfile contents from the commands that have been issued.
 - **options** *(Optional)*: 
     - **options.dir** `{String}`: Path to the directory to be used for building the docker image. Defaults to `.`.
     
-    - **options.args** `{Object}`
-        - **options.args.tag** `{String}` The tag (`-t`) of the image to be built. No default.
+    - **options.args** `{Object}`: A map of arguments to be provided to the `docker build` command. 
     
     - **options.stdout** `{function(String)}`: Executed each time stdout is generated from the subprocess. Defaults to `console.log`.
     - **options.stderr** `{function(String)}`: Executed each time stderr is generated from the subprocess. Defaults to `console.error`.

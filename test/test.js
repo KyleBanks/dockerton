@@ -34,10 +34,11 @@ var Dockerton = null;
 /**
  * Convenience function to return a new Dockerton instance.
  *
+ * @params [tag] {String}
  * @returns {Dockerton}
  */
-function _new() {
-    return new Dockerton();
+function _new(tag) {
+    return new Dockerton(tag || 'dockerton-test-' + new Date().getTime());
 }
 
 describe('Dockerton', function() {
@@ -57,9 +58,10 @@ describe('Dockerton', function() {
      * constructor
      */
     it('constructor: initializes properly', function(done) {
-        var d = new Dockerton();
+        var d = new Dockerton('test');
 
         expect(d).to.be.a('object');
+        d.tag.should.equal('test');
         d._commands.should.be.a('array');
         d._commands.length.should.equal(0);
         expect(d._dockerfile).to.equal(null);
@@ -1009,22 +1011,18 @@ describe('Dockerton', function() {
         }).catch(done);
     });
 
-    it('buildImage: supports the `tag` argument', function(done) {
+    it('buildImage: uses the `tag` provided to the constructor', function(done) {
         this.timeout(60000);
 
         var tag = 'test-tag' + new Date().getTime();
 
-        var d = _new()
+        var d = _new(tag)
             .from('scratch')
             .cmd('echo "hello world"');
 
         d.dockerfile()
             .then(function() {
-                return d.buildImage({
-                    args: {
-                        tag: tag
-                    }
-                });
+                return d.buildImage();
             })
             .then(function() {
                 // Search for the docker image with the specified tag

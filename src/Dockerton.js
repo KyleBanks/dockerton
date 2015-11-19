@@ -31,10 +31,20 @@ function _debug() {
 /**
  * Dockerton Constructor
  *
+ * @param tag {String} The tag/name of the docker image to be built/run. Equivalent to the `-t` argument of `docker build`.
+ * For example, `docker/whalesay`.
+ *
  * @constructor
  */
-function Dockerton() {
+function Dockerton(tag) {
     var self = this;
+
+    /**
+     * The tag of the docker image to be built/run.
+     *
+     * @type {String}
+     */
+    self.tag = tag;
 
     /**
      * Contains each command, in sequence, to be used in the generated
@@ -89,8 +99,7 @@ function Dockerton() {
      *
      * @param [options.dir] {String} Path to the directory to be used for building the docker image. Defaults to `.`.
      *
-     * @param [options.args] {Object}
-     * @param [options.args.tag] {String} The tag (-t) of the image to be built. No default.
+     * @param [options.args] {Object} A map of arguments to be provided to the `docker build` command.
      *
      * @param [options.stdout] {function(String)} Executed each time stdout is generated from the subprocess. Defaults to `console.log`.
      * @param [options.stderr] {function(String)} Executed each time stderr is generated from the subprocess. Defaults to `console.error`.
@@ -109,11 +118,11 @@ function Dockerton() {
 
             // Construct the arguments to be supplied to the `docker build` command
             var args = [];
+            args.push('-t');
+            args.push(self.tag);
+
             if (options.args) {
-                if (options.args.tag) {
-                    args.push('-t');
-                    args.push(options.args.tag);
-                }
+
             }
 
             var dir = options.dir || '.';
@@ -133,6 +142,17 @@ function Dockerton() {
 
                 resolve();
             });
+        });
+    };
+
+    /**
+     * Runs the Docker image
+     * @param options
+     * @returns {bluebird}
+     */
+    self.runImage = function(options) {
+        return new Promise(function(resolve, reject) {
+
         });
     };
 

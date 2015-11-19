@@ -17,7 +17,7 @@ var Dockerton = require('../index');
 /**
  * @private
  */
-var dockerton = new Dockerton()
+var dockerton = new Dockerton('dockerton-whalesay')
     .from('docker/whalesay', 'latest')
     .run('apt-get -y update && apt-get install -y fortunes')
     .cmd('/usr/games/fortune -a | cowsay');
