@@ -1,5 +1,7 @@
 # Dockerton
 
+Dockerton wraps the core functionality of Docker into an easy-to-use Node.js library. With Dockerton, you can generate Dockerfiles, build images, and run containers using a simple and intuitive JavaScript interface.
+
 <!--- [Installation](#installation)-->
 <!--- [Usage](#usage)-->
 <!--- [Commands](#commands)-->
