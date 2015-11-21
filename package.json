@@ -1,7 +1,7 @@
 {
   "name": "dockerton",
   "version": "1.0.0",
-  "description": "Docker wrapper via node.js",
+  "description": "Dockerton wraps the core functionality of Docker into an easy-to-use Node.js library.",
   "main": "index.js",
   "scripts": {
     "test": "mocha --bail --recursive --timeout 2000"
